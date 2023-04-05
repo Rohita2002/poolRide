@@ -1,0 +1,5 @@
+var app = require('../server/notworking.ts');
+var port = 8000
+app.listen(port, function() {
+ console.log('running at localhost: ' + port);
+});

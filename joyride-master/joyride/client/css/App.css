@@ -1,0 +1,458 @@
+html {
+  height: 100vh;
+}
+
+.App {
+  text-align: center;
+  height: 100%;
+
+  background-position: center center;
+  background-repeat:  no-repeat;
+  background-attachment: fixed;
+  background-size:  cover;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 100%;
+  
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+  
+  /* Set up positioning */
+  top: 0;
+  left: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.App-logo {
+  animation: App-logo-move infinite 10s linear;
+  height: 80px;
+}
+
+.App-header {
+    background-color: #123C69;
+    height: 150px;
+    padding: 20px;
+    color: white;
+    text-align: left;
+    background-image: url(https://i.imgur.com/yGKdmgQ.jpg);
+    background-size: cover;
+}
+
+.AboutPage {
+  font-family: 'Open Sans', sans-serif;
+  padding: 15px 30px;
+}
+
+p.AboutPage {
+  margin-left: 25%;
+  margin-right: 25%;
+  padding: 15px 30px;
+  text-align: left;
+}
+
+.Listing {
+    display: flow-root;
+  background-color: rgb(105, 146, 221);
+  text-align: left;
+  margin-left: 20%;
+  margin-right: 20%;
+  padding: 15px 30px;
+  border-radius: 5px;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.listitemDropdown {
+    list-style-type: none;
+    margin: 5px;
+    background: azure;
+    text-align: center;
+}
+
+.UserAccountContainer {
+  text-align: left;
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+  background-color:  rgb(105, 146, 221);
+  padding: 15px 30px;
+  border-radius: 10px;
+  margin-top: 2%;
+  display: flow-root;
+}
+
+.UserAccountFormInput {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.LoginContainer {
+  text-align: left;
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+  background-color:  rgb(105, 146, 221);
+  padding: 15px 30px;
+  margin-top: 2%;
+  display: flow-root;
+}
+
+.LoginFormInput {
+  font-family: 'Open Sans', sans-serif;
+}
+
+input[type=submit] {
+    width: 20%;
+    cursor: pointer;
+    border: none;
+    font-size: 20px;
+    color: black;
+    font-family: 'Open Sans', sans-serif;
+    background-color: lightblue;
+}
+
+input[type=submit]:hover {
+    background-color: black;
+    color: lightblue;
+}
+
+.Form-Errors {
+  text-align: left;
+  padding: 10px 2px;
+}
+
+.RideEntry {
+  border: #000000;
+  background-color: #EEE2DC;
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin-bottom: 2%;
+  box-shadow: 10px 10px 5px grey;
+  width: 100%;
+}
+
+#timestamp {
+  font-size: 18px;
+}
+
+#NoRides {
+  text-align: center;
+  font-weight: 100;
+  font-size: 20px;
+}
+
+#userRides {
+  text-align: center;
+  font-weight: 200;
+  font-size: 30px;
+}
+
+.toggleButton {
+  background-color: #AC3B61;
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.RideEntryField {
+  padding: 0%;
+  padding-bottom: 8px;
+  line-height: 1.0em;
+}
+
+ul.RideEntryField {
+  counter-reset: list;
+  border-left: 2px solid lightgrey;
+  margin: 1em;
+  padding: 0;
+}
+
+ul li.RideEntryField {
+  list-style: none;
+  margin: 0 0 2.5em 0;
+  padding: 0;
+}
+
+ul li.RideEntryField:before {
+  content: '';
+  display: -webkit-inline-box;
+  width: 2em;
+  height: 2em;
+  margin: -8px 0.5em -8px -17px;
+  border-radius: 50%;
+  background: lightgrey;
+}
+
+.RideEntryName {
+  padding: 0%;
+  padding-bottom: 8px;
+  line-height: 1.0em;
+  font-weight: 800;
+  font-size: x-large;
+}
+
+td#datestamp.RideEntryField {
+  float: right;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  font-weight: 700;
+  font-size: x-large;
+}
+
+.RideEntryFieldNumber {
+  padding: 0%;
+  padding-bottom: 8px;
+  line-height: 1.5em;
+}
+
+.RideEntryFieldPrice {
+  padding: 0%;
+  padding-bottom: 8px;
+  line-height: 1.5em;
+  text-align: right;
+}
+
+.NewRideForm {
+  font-family: 'Open Sans', sans-serif;
+}
+
+input[type=text].NewRideFormInput {
+  width: 85%;
+}
+
+select.NewRideFormInput {
+  width: 85%;
+}
+
+.NewRideTwoColumns {
+  width: 50%;
+}
+
+.NewRideForm-container {
+  background-color: rgb(105, 146, 221);
+  text-align: left;
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-top: 2%;
+  padding: 15px 30px;
+  display: flow-root;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+h1.formInput {
+  font-size: 20px;
+  text-align: left;
+  margin-left: 0px;
+  padding: 0;
+}
+
+input, select, textarea, option {
+  font-family: 'Open Sans', sans-serif;
+}
+
+button.editButton {
+  background-color: rgb(139, 129, 228);
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  float: right;
+  font-size: large;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.editButton:hover {
+  background-color: #4CAF50; /* Green */
+  color: white;
+}
+
+textarea {
+  width: 100%;
+}
+
+label {
+	color: #000000;
+	display: block;
+	margin: 0px 0px 5px 0px;
+}
+
+input, select {
+    margin: 0px 0px 15px 0px;
+    display: block;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    -webkit-border-radius:6px;
+    -moz-border-radius:6px;
+    border: 2px solid #fff;
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+    -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+    -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
+}
+
+#new-form-button {
+  top: 10%;
+}
+
+#register-button {
+  top: 20%;
+}
+
+#about-page-button {
+  top: 30%;
+}
+
+#login-button {
+  top: 40%;
+}
+
+.active {
+  font-weight: bold;
+  color: rgb(50, 129, 76);
+  background: rgb(255, 255, 255);
+  border-radius: 3px;
+}
+
+.menuOption {
+  padding: 10px 10px 10px 10px;
+  text-align: right;
+  position: relative;
+  color: rgb(196, 141, 221);
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.dropdownMenu {
+    width: 100%;
+}
+
+.dropdown-menu-container {
+    float: right;
+    width: 100%;
+}
+
+.menuOptionMobile {
+    padding: 10px 10px 10px 10px;
+    text-align: center;
+    position: relative;
+    color: rgb(196, 141, 221);
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.menuOption:hover {
+    color: rgb(75, 187, 84);
+}
+
+.mainMenu {
+  position: absolute;
+  right: 2.5%;
+  margin-top: -3%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.HeaderButton {
+  width:13%;
+  background-color: #AC3B61;
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 15px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0% 80%;
+  cursor: pointer;
+  border-radius: 12px;
+  position: absolute;
+}
+
+.toggleButton:hover {
+  background-color: #AC3B61;
+  color: rgb(255, 255, 255);
+}
+
+.customCalendar {
+  font-size: 0.8em;
+}
+
+.searchFilter {
+  font-size: 0.8em;
+  margin-left: 20%;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.UserAccount {
+  text-align: left;
+  width: 80%;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes App-logo-move {
+  from { transform: translate(-10px,15px); }
+  to { transform: translate(90px,15px); }
+}
+
+@media screen and (max-width: 760px) {
+    .Listing {
+        margin: 0px;
+    }
+
+    p.AboutPage {
+        margin-left: 5%;
+        margin-right: 5%;
+        padding: 15px 30px;
+        text-align: left;
+    }
+
+    .UserAccountContainer {
+        margin: 0px;
+        width: auto;
+    }
+
+    input[type=submit] {
+        width: auto;
+    }
+
+    .LoginContainer {
+        width: auto;
+        margin: 0px;
+    }
+
+    .NewRideForm-container {
+        width: auto;
+        margin: 0px;
+    }
+
+    .searchFilter {
+        margin: 4px 2px;
+        text-align: center;
+        border-radius: 20px;
+    }
+}
