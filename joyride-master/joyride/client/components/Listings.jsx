@@ -6,6 +6,7 @@ import LocationConstants from './LocationConstants.ts';
 
 import "react-datepicker/dist/react-datepicker.css";
 import request from 'request';
+// import { log } from 'console';
 
 /**
  * Front page with all the rides available, subject to filter.
@@ -24,6 +25,8 @@ class Listings extends Component {
 
         this.toggleList = this.toggleList.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+
         this.getListOfRides = this.getListOfRides.bind(this);
         this.getListOfRides();
     }
@@ -116,7 +119,30 @@ class Listings extends Component {
             this.getListOfRides();
         });
     }
+    async handleClick(){
+        console.log('clicked.....');
+        const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
 
+        const self = this;
+
+        const func = () =>  fetch(uri, {
+            method: "POST"
+        }).then(function(response) {
+            // Check if login worked. If not, then show not logged in. 
+            if (response.status == 404 || 
+                response.status == 401) {
+                    self.setState(state => ({
+                        loggedIn: false
+                    })
+                );
+            }
+            const res = response.json();
+            console.log(res);
+            return res;
+        })
+        const auth = await func();
+        console.log('auth', auth);
+    }
     render() {
         // showShowEdit should be flipped to false after testing.
         return (
@@ -128,6 +154,7 @@ class Listings extends Component {
                     <br></br>
                 </div>
                 <DynamicRides rides={this.state.Rides} shouldShowEdit={false}/>
+                <button onClick={this.handleClick}>click me</button>
             </div>
         );
     }    

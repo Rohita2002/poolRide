@@ -7,7 +7,8 @@ export interface IUser {
     username: String,
     emailID: String,
     mobileNumber: String,
-    password: String
+    password: String,
+    
     // aboutme: String,
     // license: String
 }
