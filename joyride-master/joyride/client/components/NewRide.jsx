@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom';
 
 import LocationConstants from './LocationConstants.ts';
 import DatePicker from 'react-datepicker';
-
 import 'react-datepicker/dist/react-datepicker.css';
 
 /**
@@ -34,7 +33,7 @@ class NewRide extends Component {
 			vehicleSpecification: '',
 			licenseId: '',
 
-            rides : new Map()
+			rides: new Map(),
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -46,7 +45,7 @@ class NewRide extends Component {
 		this.handleNewCategoryChange = this.handleNewCategoryChange.bind(this);
 		this.handleDateChange = this.handleDateChange.bind(this);
 		this.handleNumberChange = this.handleNumberChange.bind(this);
-		this.DynamicDropDownMenu = this.DynamicDropDownMenu.bind(this);
+		// this.DynamicDropDownMenu = this.DynamicDropDownMenu.bind(this);
 		this.Errors = this.Errors.bind(this);
 
 		this.signedInUser();
@@ -59,44 +58,45 @@ class NewRide extends Component {
 	 * See if user is signed in. If so, open the new ride form. If not, prompt them to sign in.
 	 */
 
-    getAllRides(){
-        const uri = `http://localhost:${process.env.PORT}/ride/rides`;
+	getAllRides() {
+		const uri = `http://localhost:${process.env.PORT}/ride/rides`;
 
 		// Get user id and send it in with the post request.
-		
+
 		self = this;
 
-        fetch(uri, {
+		fetch(uri, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		}).then((response) => {
-            return response.json();
-            // self.setState((state) => ({
-            //     rides : 
-            // }))
-        }).then((data) => {
-            const map = new Map();
-            data.forEach((ride) => {
-                if(map.has(ride.category)){
-                    const arr = map.get(ride.category);
-                    arr.push(ride);
-                    map.set(ride.category , arr);
-                }else{
-                    const arr = [ride]
-                    // arr.push(ride);
-                    map.set(ride.category , arr);
-                }
-                // map.set(ride.category , [...ride]);
-            })
-            self.setState((state) => ({
-                rides : map,
-            }))
-            console.log('data' , data)
-        })
-
-    }
+		})
+			.then((response) => {
+				return response.json();
+				// self.setState((state) => ({
+				//     rides :
+				// }))
+			})
+			.then((data) => {
+				const map = new Map();
+				data.forEach((ride) => {
+					if (map.has(ride.category)) {
+						const arr = map.get(ride.category);
+						arr.push(ride);
+						map.set(ride.category, arr);
+					} else {
+						const arr = [ride];
+						// arr.push(ride);
+						map.set(ride.category, arr);
+					}
+					// map.set(ride.category , [...ride]);
+				});
+				self.setState((state) => ({
+					rides: map,
+				}));
+				console.log('data', data);
+			});
+	}
 	haveVehicleDetails() {
 		console.log('hav veh det fun called');
 		const uri = `http://localhost:${process.env.PORT}/ride/getVehicleDetails`;
@@ -118,6 +118,7 @@ class NewRide extends Component {
 				self.setState((state) => ({
 					haveVehicle: true,
 				}));
+				// window.location.reload();
 			} else {
 				console.log('no veh in frontend');
 			}
@@ -156,7 +157,7 @@ class NewRide extends Component {
 			});
 
 		this.haveVehicleDetails();
-        this.getAllRides();
+		this.getAllRides();
 	}
 
 	/**
@@ -209,17 +210,17 @@ class NewRide extends Component {
 			});
 		}
 
-		if (value == 'ChicagoToChampaign') {
-			this.setState({
-				departure: 'oakbrook',
-				destination: 'union',
-			});
-		} else {
-			this.setState({
-				departure: 'union',
-				destination: 'oakbrook',
-			});
-		}
+		// if (value == 'ChicagoToChampaign') {
+		// 	this.setState({
+		// 		departure: 'oakbrook',
+		// 		destination: 'union',
+		// 	});
+		// } else {
+		// 	this.setState({
+		// 		departure: 'union',
+		// 		destination: 'oakbrook',
+		// 	});
+		// }
 	}
 
 	handleNewCategoryChange(event) {
@@ -283,8 +284,6 @@ class NewRide extends Component {
 				.catch(function (err) {
 					console.log('Request failed', err);
 				});
-
-                
 		}
 	}
 
@@ -321,48 +320,48 @@ class NewRide extends Component {
 	 * Create a dropdown menu populated with specific locations.
 	 * @param {*} props : specify which direction the dropdown menu would accomodate
 	 */
-	DynamicDropDownMenu(props) {
-		let locationArray = [];
-		var locations;
+	// DynamicDropDownMenu(props) {
+	// 	let locationArray = [];
+	// 	var locations;
 
-		var val;
+	// 	var val;
 
-		// Departure dropdown menu.
-		if (props.stop == 'departure') {
-			locations =
-				this.state.category == 'ChicagoToChampaign'
-					? LocationConstants.ChicagoPlaces
-					: LocationConstants.ChampaignPlaces;
-			val = this.state.departure;
-		} else {
-			// Destination dropdown menu.
-			locations =
-				this.state.category == 'ChicagoToChampaign'
-					? LocationConstants.ChampaignPlaces
-					: LocationConstants.ChicagoPlaces;
-			val = this.state.destination;
-		}
+	// 	// Departure dropdown menu.
+	// 	if (props.stop == 'departure') {
+	// 		locations =
+	// 			this.state.category == 'ChicagoToChampaign'
+	// 				? LocationConstants.ChicagoPlaces
+	// 				: LocationConstants.ChampaignPlaces;
+	// 		val = this.state.departure;
+	// 	} else {
+	// 		// Destination dropdown menu.
+	// 		locations =
+	// 			this.state.category == 'ChicagoToChampaign'
+	// 				? LocationConstants.ChampaignPlaces
+	// 				: LocationConstants.ChicagoPlaces;
+	// 		val = this.state.destination;
+	// 	}
 
-		// Pair all menu items with their values.
-		Object.keys(locations).forEach((key) => {
-			locationArray.push(
-				<option key={key} value={key}>
-					{locations[key].place}
-				</option>
-			);
-		});
+	// 	// Pair all menu items with their values.
+	// 	Object.keys(locations).forEach((key) => {
+	// 		locationArray.push(
+	// 			<option key={key} value={key}>
+	// 				{locations[key].place}
+	// 			</option>
+	// 		);
+	// 	});
 
-		return (
-			<select
-				className="NewRideFormInput"
-				name={props.stop}
-				value={val}
-				onChange={this.handleChange}
-			>
-				{locationArray}
-			</select>
-		);
-	}
+	// 	return (
+	// 		<select
+	// 			className="NewRideFormInput"
+	// 			name={props.stop}
+	// 			value={val}
+	// 			onChange={this.handleChange}
+	// 		>
+	// 			{locationArray}
+	// 		</select>
+	// 	);
+	// }
 
 	/**
 	 * Display errors if there are any.
@@ -387,8 +386,8 @@ class NewRide extends Component {
 		}
 		if (this.state.haveVehicle) {
 			console.log('have vehicle');
-            const categories = Array.from( this.state.rides.keys())
-            console.log('categories', categories);
+			const categories = Array.from(this.state.rides.keys());
+			console.log('categories', categories);
 			// const dynamicOptions = this.getGroups();
 			return (
 				<div className="NewRideForm-container">
@@ -438,13 +437,13 @@ class NewRide extends Component {
 												<option value="ChampaignToChicago">
 													Champaign to Chicago
 												</option> */}
-                                                {categories.map((category) => {
-                                                    return (
-                                                        <option key={category} value={category}>
-													        {category}
-												        </option>
-                                                    )
-                                                })}
+												{categories.map((category) => {
+													return (
+														<option key={category} value={category}>
+															{category}
+														</option>
+													);
+												})}
 												<option value="other">Create New</option>
 											</select>
 										) : (
@@ -471,11 +470,25 @@ class NewRide extends Component {
 								<tr>
 									<td colSpan="1">
 										<label>Pick your departure</label>
-										<this.DynamicDropDownMenu stop="departure" />
+										{/* <this.DynamicDropDownMenu stop="departure" /> */}
+										<input
+											className="NewRideFormInput"
+											type="text"
+											name="departure"
+											value={this.state.departure}
+											onChange={this.handleChange}
+										/>
 									</td>
 									<td colSpan="1">
 										<label>Pick your destination</label>
-										<this.DynamicDropDownMenu stop="destination" />
+										{/* <this.DynamicDropDownMenu stop="destination" /> */}
+                                        <input
+											className="NewRideFormInput"
+											type="text"
+											name="destination"
+											value={this.state.destination}
+											onChange={this.handleChange}
+										/>
 									</td>
 								</tr>
 								<tr>

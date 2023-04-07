@@ -138,6 +138,8 @@ export default class RideController implements Controller {
 		response: express.Response
 	) => {
 		// Get the driverID
+		console.log('rides by driver called');
+		
 		const driverID = request.query.driverID.valueOf();
 		const date = new Date();
 
@@ -147,15 +149,17 @@ export default class RideController implements Controller {
 				this.ride
 					.find({
 						driverID: driverID,
-						date: {
-							$gte: date,
-						},
+						// date: {
+						// 	$gte: date,
+						// },
 					})
 					.sort({ date: '1' })
 					.then((rides) => {
+						console.log('rides by driver', rides)
 						response.send(rides);
 					});
 			} else {
+				console.log('no driver id')
 				response.send();
 			}
 		} catch {
