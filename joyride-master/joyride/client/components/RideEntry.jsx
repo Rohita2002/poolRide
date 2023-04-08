@@ -6,32 +6,29 @@ import { Redirect } from 'react-router-dom';
  * The basic architecture for displaying a ride in Listings.jsx.
  */
 class RideEntry extends Component {
-    constructor(props) {
-        super(props);
+	constructor(props) {
+		super(props);
 
-        this.state = {
-            user: '',
-            userNotFound: false,
-            shouldShowEdit: this.props.shouldShowEdit,
-            editRide: false,
-            poolDetails : this.props,
-            poolID : '',
-            memberID : '',
-        }
+		this.state = {
+			user: '',
+			userNotFound: false,
+			shouldShowEdit: this.props.shouldShowEdit,
+			editRide: false,
+			poolDetails: this.props,
+			poolID: '',
+			memberID: '',
+		};
 
-        this.showDate = this.showDate.bind(this);
-        this.showButton = this.showButton.bind(this);
-        this.showPrice = this.showPrice.bind(this);
-        this.handleEditRide = this.handleEditRide.bind(this);
-        this.handleclick = this.handleclick.bind(this);
-        this.getUser(this.props.driverID);
-    }
+		this.showDate = this.showDate.bind(this);
+		this.showButton = this.showButton.bind(this);
+		this.showPrice = this.showPrice.bind(this);
+		this.handleEditRide = this.handleEditRide.bind(this);
+		this.handleclick = this.handleclick.bind(this);
+		this.getUser(this.props.driverID);
+	}
 
-
-
-
-    async handleclick(){
-        console.log('clicked.....');
+	async handleclick() {
+		console.log('clicked.....');
 		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
 
 		const self = this;
@@ -52,171 +49,185 @@ class RideEntry extends Component {
 			});
 
 		const auth = await func();
-        self.setState((state) => ({
-            memberID : auth.founduser._id,
-            poolID : this.state.poolDetails.rideID
-        }))
-		
-        console.log('poolDetails', this.state.poolDetails);
-        const joinPool = () => {
-            const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
-		    const self = this;
-            const body = JSON.stringify(this.state);
-            fetch(uri, {
+		self.setState((state) => ({
+			memberID: auth.founduser._id,
+			poolID: this.state.poolDetails.rideID,
+		}));
+
+		console.log('poolDetails', this.state.poolDetails);
+		const joinPool = () => {
+			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+			const self = this;
+			const body = JSON.stringify(this.state);
+			fetch(uri, {
 				method: 'POST',
-                body,
-                headers : {
-                    'Content-Type': 'application/json',
-                },
+				body,
+				headers: {
+					'Content-Type': 'application/json',
+				},
 			}).then((response) => {
-                if(response.status === 200){
-                    console.log('joined');
-                }else{
-                    console.log('not joined');
-                }
-            })
-        }
+				if (response.status === 200) {
+					console.log('joined');
+				} else {
+					console.log('not joined');
+				}
+			});
+		};
 
-        const joinpool = await joinPool();
-        console.log('joinpool', joinpool);
+		const joinpool = await joinPool();
+		console.log('joinpool', joinpool);
+	}
 
-    }
+	/**
+	 * Prettify the date a little bit.
+	 */
+	showDate() {
+		const date = new Date(this.props.date);
 
-    /**
-     * Prettify the date a little bit.
-     */
-    showDate() {
+		const hours = date.getHours();
 
-        const date = new Date(this.props.date);
+		const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
 
-        const hours = date.getHours();
+		return (
+			<td className="RideEntryField" id="datestamp">
+				{hours}:{minutes}
+			</td>
+		);
+	}
 
-        const minutes = (date.getMinutes()<10 ? '0' : '')+date.getMinutes();
+	/**
+	 * Show the button (edit or book) of ride if applicable.
+	 */
+	showButton() {
+		if (this.state.shouldShowEdit) {
+			return (
+				<td>
+					<button
+						className="editButton"
+						onClick={this.handleEditRide}
+						type="button"
+					>
+						Edit
+					</button>
+				</td>
+			);
+		} else {
+			return null;
+		}
+	}
 
-        return (
-            <td className="RideEntryField" id="datestamp">{hours}:{minutes}</td>
-        );
-    }
+	/**
+	 * Render price of ride.
+	 */
+	showPrice() {
+		if (this.props.price == 0) {
+			return (
+				<td>
+					<p className="RideEntryFieldPrice">free</p>
+				</td>
+			);
+		} else {
+			return (
+				<td>
+					<p className="RideEntryFieldPrice">${this.props.price}</p>
+				</td>
+			);
+		}
+	}
 
-    /**
-     * Show the button (edit or book) of ride if applicable.
-     */
-    showButton() {
-        if (this.state.shouldShowEdit) {
-            return (
-                <td>
-                    <button className="editButton" onClick={this.handleEditRide} type="button">Edit</button>
-                </td>
-            );
-        } else {
-            return null;
-        }           
-    }
+	handleEditRide() {
+		this.setState({
+			editRide: true,
+		});
+	}
 
-    /**
-     * Render price of ride.
-     */
-    showPrice() {
-        if(this.props.price == 0) {
-            return(
-                <td>
-                    <p className="RideEntryFieldPrice">
-                        free
-                    </p>
-                </td>
-            );
-        } else {
-            return(
-                <td>
-                    <p className="RideEntryFieldPrice">
-                        ${this.props.price}
-                    </p>
-                </td>
-            )
-        }
-    }
+	/**
+	 * From the ride object, extract the driver's ID to look them up in the DB and get relevant infos.
+	 */
+	getUser(driverID) {
+		var uri = `http://localhost:${process.env.PORT}/user/${driverID}`;
 
-    handleEditRide() {
-        this.setState({
-            editRide: true
-        });
-    }
-    
-    /**
-     * From the ride object, extract the driver's ID to look them up in the DB and get relevant infos.
-     */
-    getUser(driverID) {
-        var uri = `http://localhost:${process.env.PORT}/user/${driverID}`;
+		const self = this;
 
-        const self = this;
+		request.get(uri, function (error, response, body) {
+			// Print the error if one occurred
+			if (error) {
+				// Should the ride be deleted?
+				console.error('error:', error);
+				self.setState({
+					userNotFound: true,
+				});
+			} else if (response.statusCode === 200) {
+				self.setState({
+					user: JSON.parse(body),
+				});
 
-        request.get(uri, function (error, response, body) {
-            // Print the error if one occurred
-            if (error) {
-                // Should the ride be deleted?
-                console.error('error:', error); 
-                self.setState({
-                    userNotFound: true
-                });
-            } else if (response.statusCode === 200) {
-                self.setState({
-                    user: JSON.parse(body)
-                });
+				console.log('user in ride entry:' + self.state.user.firstname);
+			}
+		});
+	}
 
-                console.log("user in ride entry:" + self.state.user.firstname);
-            }
-        });
-    }
-
-    /**
-     * Render a listing.
-     */
-    render() {
-        // TODO: add a button to toggle the mode to edit. This button will only be visible if the driver id matches the userid. Should the edit button show up on the listings page? What should the edit page look like? Like the listing or like the new ride entry page? Answer: more like the new ride entry page. 
-        if (this.state.userNotFound) {
-            return(null);
-        } else if (this.state.editRide) {
-            return (
-                <Redirect to={{
-                    pathname: '/editride',
-                    state: { rideID: this.props.rideID }
-                }} />
-            )
-        } else {
-            return (
-                <table className="RideEntry">
-                    <tbody>
-                        <tr>
-                            <td className="RideEntryName">{this.state.user.firstname+" "+this.state.user.lastname}</td>
-                            <this.showDate/>
-                        </tr>
-                        <tr>
-                            <td>
-                                <ul className="RideEntryField">
-                                    <li className="RideEntryField">Pickup: {this.props.departure}</li>
-                                    <li className="RideEntryField">Drop-off: {this.props.destination}</li>
-                                </ul>
-                            </td>
-                            <this.showPrice />
-                        </tr>
-                        <tr>
-                            <td>
-                                <p className="RideEntryFieldNumber">
-                                    {this.props.numberOfSeats}
-                                </p>
-                            </td>
-                            <td>
-                                <button className="RideEntryFieldNumber" onClick={this.handleclick}>
-                                    Join
-                                </button>
-                            </td>
-                            <this.showButton/>
-                        </tr>
-                    </tbody>
-                </table>
-            );
-        }
-    }
+	/**
+	 * Render a listing.
+	 */
+	render() {
+		// TODO: add a button to toggle the mode to edit. This button will only be visible if the driver id matches the userid. Should the edit button show up on the listings page? What should the edit page look like? Like the listing or like the new ride entry page? Answer: more like the new ride entry page.
+		if (this.state.userNotFound) {
+			return null;
+		} else if (this.state.editRide) {
+			return (
+				<Redirect
+					to={{
+						pathname: '/editride',
+						state: { rideID: this.props.rideID },
+					}}
+				/>
+			);
+		} else {
+			return (
+				<table className="RideEntry">
+					<tbody>
+						<tr>
+							<td className="RideEntryName">
+								{this.state.user.firstname + ' ' + this.state.user.lastname}
+							</td>
+							<this.showDate />
+						</tr>
+						<tr>
+							<td>
+								<ul className="RideEntryField">
+									<li className="RideEntryField">
+										Pickup: {this.props.departure}
+									</li>
+									<li className="RideEntryField">
+										Drop-off: {this.props.destination}
+									</li>
+								</ul>
+							</td>
+							<this.showPrice />
+						</tr>
+						<tr>
+							<td>
+								<p className="RideEntryFieldNumber">
+									{this.props.numberOfSeats}
+								</p>
+							</td>
+							<td>
+								<button
+									type="submit"
+									className="btn"
+									onClick={this.handleclick}
+								>
+									Join
+								</button>
+							</td>
+							<this.showButton />
+						</tr>
+					</tbody>
+				</table>
+			);
+		}
+	}
 }
 
 export default RideEntry;
