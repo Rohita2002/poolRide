@@ -105,7 +105,7 @@ class App extends Component {
                 Sign up
               </NavLink>
               <NavLink className="menuOption" to="/about">
-                About me
+                About
               </NavLink>
               <NavLink className="menuOption" to="/login" hidden={this.state.isUserSignedIn}>
                 Log in
