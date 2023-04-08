@@ -16,10 +16,15 @@ const rideSchema = new Schema({
     departure: String,
     category: String,
     price: Number,
-    numberOfSeats: Number
+    numberOfSeats: Number,
+    poolMembers : [
+        {
+            memberID : String,
+        }
+    ]
 }, {
     collection: 'Rides'
 });
 
-const rideModel = model<IRide & Document>('Ride', rideSchema);
+const rideModel = model<IRide>('Ride', rideSchema);
 export default rideModel;

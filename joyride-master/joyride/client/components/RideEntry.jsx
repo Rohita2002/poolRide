@@ -13,14 +13,73 @@ class RideEntry extends Component {
             user: '',
             userNotFound: false,
             shouldShowEdit: this.props.shouldShowEdit,
-            editRide: false
+            editRide: false,
+            poolDetails : this.props,
+            poolID : '',
+            memberID : '',
         }
 
         this.showDate = this.showDate.bind(this);
         this.showButton = this.showButton.bind(this);
         this.showPrice = this.showPrice.bind(this);
         this.handleEditRide = this.handleEditRide.bind(this);
+        this.handleclick = this.handleclick.bind(this);
         this.getUser(this.props.driverID);
+    }
+
+
+
+
+    async handleclick(){
+        console.log('clicked.....');
+		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+
+		const self = this;
+
+		const func = () =>
+			fetch(uri, {
+				method: 'POST',
+			}).then(function (response) {
+				// Check if login worked. If not, then show not logged in.
+				if (response.status == 404 || response.status == 401) {
+					self.setState((state) => ({
+						loggedIn: false,
+					}));
+				}
+				const res = response.json();
+				console.log(res);
+				return res;
+			});
+
+		const auth = await func();
+        self.setState((state) => ({
+            memberID : auth.founduser._id,
+            poolID : this.state.poolDetails.rideID
+        }))
+		
+        console.log('poolDetails', this.state.poolDetails);
+        const joinPool = () => {
+            const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+		    const self = this;
+            const body = JSON.stringify(this.state);
+            fetch(uri, {
+				method: 'POST',
+                body,
+                headers : {
+                    'Content-Type': 'application/json',
+                },
+			}).then((response) => {
+                if(response.status === 200){
+                    console.log('joined');
+                }else{
+                    console.log('not joined');
+                }
+            })
+        }
+
+        const joinpool = await joinPool();
+        console.log('joinpool', joinpool);
+
     }
 
     /**
@@ -145,6 +204,11 @@ class RideEntry extends Component {
                                 <p className="RideEntryFieldNumber">
                                     {this.props.numberOfSeats}
                                 </p>
+                            </td>
+                            <td>
+                                <button className="RideEntryFieldNumber" onClick={this.handleclick}>
+                                    Join
+                                </button>
                             </td>
                             <this.showButton/>
                         </tr>

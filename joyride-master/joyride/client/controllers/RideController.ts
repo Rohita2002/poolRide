@@ -6,6 +6,8 @@ import groupModel from '../schemas/Groups';
 import { request } from 'http';
 import { IVehicle } from '../interfaces/IVehicle';
 
+import { Types } from 'mongoose';
+
 export default class RideController implements Controller {
 	public path = '/ride';
 	public router = express.Router();
@@ -24,6 +26,7 @@ export default class RideController implements Controller {
 	public initRoutes() {
 		this.router.get(this.path, this.getAllRides);
 		this.router.get(`${this.path}/rides`, this.getEveryRide);
+		this.router.post(`${this.path}/joinPool`, this.joinPool);
 		this.router.get(`${this.path}/bydriver`, this.getAllRidesByDriverID);
 		this.router.get(`${this.path}/:id`, this.getRideById);
 		this.router.put(`${this.path}/:id`, this.modifyRide);
@@ -31,6 +34,33 @@ export default class RideController implements Controller {
 		this.router.post(this.path, this.createRide);
 		this.router.post(`${this.path}/getVehicleDetails`, this.getVehicle);
 		this.router.post(`${this.path}/vehicleSubmit`, this.addVehicle);
+	}
+
+	private joinPool = (
+		request: express.Request,
+		response: express.Response
+	) => {
+		// var ObjectId = require('mongoose').Types.ObjectId;
+		const {memberID , poolID} = request.body;
+
+		this.ride.updateOne({
+			"_id" : Types.ObjectId( poolID )
+		} , {
+			$push : {
+				poolMembers : 	{
+					memberID : memberID,
+				}
+			}
+
+			
+		})
+		.then(() => {
+			response.sendStatus(200);
+		}).catch((err) => {
+			console.log('err in updating poolmembers arr' , err);
+			response.sendStatus(400);
+			
+		})
 	}
 
     private getEveryRide = (
