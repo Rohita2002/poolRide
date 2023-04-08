@@ -92,7 +92,7 @@ class App extends Component {
             <Link to="/">
               <img id="logo" src={tractor} className="App-logo" alt="logo" />
             </Link>
-            <h2>JOYRIDE</h2>
+            <h2>POOL&RIDE</h2>
             <DropdownMenu width={this.state.screenWidth} isUserSignedIn={this.state.isUserSignedIn} />
             <div className="mainMenu" hidden={this.state.screenWidth <= 415}>
               <NavLink className="menuOption" to="/myaccount" hidden={!this.state.isUserSignedIn}>

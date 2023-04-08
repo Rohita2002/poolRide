@@ -229,7 +229,7 @@ class Listings extends Component {
 				</select>
 				{this.state.Rides && this.state.category && (
 					<div>
-						<DynamicRides rides={this.state.Rides.get(this.state.category)}></DynamicRides>
+						<DynamicRides rides={this.state.Rides.get(this.state.category) } shouldShowJoin={true}></DynamicRides>
 					</div>
 				)}
 			</div>
