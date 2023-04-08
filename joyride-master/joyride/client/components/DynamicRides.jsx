@@ -55,6 +55,7 @@ class DynamicRides extends Component {
 						numberOfSeats={ride.numberOfSeats - ride.poolMembers?.length}
 						price={ride.price}
 						shouldShowEdit={this.props.shouldShowEdit}
+						shouldShowJoin={this.props.shouldShowJoin}
                         poolMembers = {ride.poolMembers}
 					/>
 				);

@@ -133,7 +133,7 @@ export default class RideController implements Controller {
 		console.log('get list of rides');
 
 		// If direction is specificed, show only one direction.
-		const dir = request.query.dir.valueOf();
+		const dir = request.query?.dir?.valueOf();
 
 		// If date is specificed, show only dates greater than or equal to that one.
 		const date = new Date(request.query.date.valueOf().toString());
@@ -170,7 +170,7 @@ export default class RideController implements Controller {
 		// Get the driverID
 		console.log('rides by driver called');
 		
-		const driverID = request.query.driverID.valueOf();
+		const driverID = request.query?.driverID?.valueOf();
 		const date = new Date();
 
 		// Sort rides in order.

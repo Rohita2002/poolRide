@@ -84,7 +84,8 @@ class Login extends Component {
             alert("Enter in your password!");
         } else {
             // Make the post request
-            const uri = `http://localhost:${process.env.PORT}/user/login`;
+            // const uri = `http://localhost:${process.env.PORT}/user/login`;
+            const uri = 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m'
 
             const formdata = JSON.stringify(this.state);
             // remove this line when cleaning out code. 

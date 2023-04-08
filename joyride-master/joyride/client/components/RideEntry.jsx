@@ -13,6 +13,7 @@ class RideEntry extends Component {
 			user: '',
 			userNotFound: false,
 			shouldShowEdit: this.props.shouldShowEdit,
+			shouldShowJoin: this.props.shouldShowJoin,
 			editRide: false,
 			poolDetails: this.props,
 			poolID: '',
@@ -24,38 +25,45 @@ class RideEntry extends Component {
 		this.showPrice = this.showPrice.bind(this);
 		this.handleEditRide = this.handleEditRide.bind(this);
 		this.handleclick = this.handleclick.bind(this);
+		this.checkToken = this.checkToken.bind(this);
+        this.checkToken();
 		this.getUser(this.props.driverID);
+
 	}
 
-	async handleclick() {
-		console.log('clicked.....');
+	checkToken = async () => {
 		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
 
 		const self = this;
 
-		const func = () =>
-			fetch(uri, {
-				method: 'POST',
-			}).then(function (response) {
-				// Check if login worked. If not, then show not logged in.
-				if (response.status == 404 || response.status == 401) {
-					self.setState((state) => ({
-						loggedIn: false,
-					}));
-				}
-				const res = response.json();
-				console.log(res);
-				return res;
-			});
+	
 
-		const auth = await func();
+		const func = () => fetch(uri, {
+			method: 'POST',
+		}).then(function (response) {
+			// Check if login worked. If not, then show not logged in.
+			if (response.status == 404 || response.status == 401) {
+				self.setState((state) => ({
+					loggedIn: false,
+				}));
+			}
+			const res = response.json();
+			console.log(res);
+			return res;
+		});
+        const auth = await func();
 		self.setState((state) => ({
 			memberID: auth.founduser._id,
 			poolID: this.state.poolDetails.rideID,
 		}));
 
-		console.log('poolDetails', this.state.poolDetails);
-		const joinPool = () => {
+		// console.log('poolDetails', this.state.poolDetails);
+	};
+
+	async handleclick() {
+		console.log('clicked.....');
+		
+		const joinPool = async () => {
 			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
 			const self = this;
 			const body = JSON.stringify(this.state);
@@ -76,6 +84,7 @@ class RideEntry extends Component {
 
 		const joinpool = await joinPool();
 		console.log('joinpool', joinpool);
+		window.location.reload();
 	}
 
 	/**
@@ -184,6 +193,12 @@ class RideEntry extends Component {
 				/>
 			);
 		} else {
+			let memberJoined = false;
+			this.props.poolMembers?.forEach((element) => {
+				console.log('element', element);
+				console.log('this.state?.memberID', this.state?.memberID);
+				if (this.state?.memberID === element.memberID) memberJoined = true;
+			});
 			return (
 				<table className="RideEntry">
 					<tbody>
@@ -212,15 +227,20 @@ class RideEntry extends Component {
 									{this.props.numberOfSeats}
 								</p>
 							</td>
-							<td>
+							{this.state.shouldShowJoin && <td>
+                               
 								<button
 									type="submit"
-									className="btn"
+									className={
+										!this.props.numberOfSeats || memberJoined
+											? 'disableBtn'
+											: 'btn'
+									}
 									onClick={this.handleclick}
 								>
 									Join
 								</button>
-							</td>
+							</td>}
 							<this.showButton />
 						</tr>
 					</tbody>

@@ -23,6 +23,11 @@ class App {
     // this.app.use(bodyParser.json());
     this.app.use(express.json())
     this.app.use(cookieParser());
+    this.app.use(function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
   }
 
   public getServer() {
@@ -46,6 +51,8 @@ class App {
     router.get('*', function(req, res) {
       res.render('index');
     })
+    
+    
     this.app.use('/', router);
   }
 
