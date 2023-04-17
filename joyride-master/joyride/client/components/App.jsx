@@ -181,14 +181,29 @@ class App extends Component {
 			</div>
 		);
 
+		var logoItem = !this.state.isAdmin ? (
+			<div>
+				<Link to="/">
+					<img id="logo" src={tractor} className="App-logo" alt="logo" />
+				</Link>
+			</div>
+		) : (
+			<div>
+				<Link to="/admin">
+					<img id="logo" src={tractor} className="App-logo" alt="logo" />
+				</Link>
+			</div>
+		);
+
 		return (
 			<Router>
 				<div className="App">
 					<div className="App-header">
-						<Link to="/">
+						{/* <Link to="/">
 							<img id="logo" src={tractor} className="App-logo" alt="logo" />
-						</Link>
-						<h2>JOYRIDE</h2>
+						</Link> */}
+						{logoItem}
+						<h2>Pool&Ride</h2>
 						<DropdownMenu
 							width={this.state.screenWidth}
 							isUserSignedIn={this.state.isUserSignedIn}
