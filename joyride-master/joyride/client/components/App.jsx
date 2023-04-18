@@ -164,6 +164,9 @@ class App extends Component {
 				<NavLink className="menuOption" to="/viewpools">
 					View Pools
 				</NavLink>
+				<NavLink className="menuOption" to="/admin">
+					Generate Report
+				</NavLink>
 				<NavLink
 					className="menuOption"
 					to="/login"

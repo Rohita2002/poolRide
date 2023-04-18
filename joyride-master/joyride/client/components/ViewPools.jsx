@@ -8,12 +8,12 @@ export default class ViewPools extends Component {
 		super(props);
 
 		this.state = {
-			Rides: null,
+			Rides: [],
 		};
 
 		this.getEveryRide = this.getEveryRide.bind(this);
 		this.handleDelete = this.handleDelete.bind(this);
-		this.displayRides = this.displayRides.bind(this);
+		// this.displayRides = this.displayRides.bind(this);
 
 		this.getEveryRide();
 	}
@@ -24,6 +24,7 @@ export default class ViewPools extends Component {
 		// Get user id and send it in with the post request.
 
 		self = this;
+		// const arr = [];
 
 		fetch(uri, {
 			method: 'GET',
@@ -43,7 +44,7 @@ export default class ViewPools extends Component {
 					Rides: arr,
 				});
 				console.log('data', data);
-				console.log('rides in getting', this.state.Rides);
+				console.log('rides in getting', Rides);
 			});
 	}
 
@@ -60,37 +61,64 @@ export default class ViewPools extends Component {
 				'Content-Type': 'application/json',
 			},
 		})
-			.then( (response) => {
+			.then((response) => {
 				if (response.status === 200) {
 					window.location.reload();
 				}
 			})
-			.catch((err)=> {
+			.catch((err) => {
 				console.log('Request failed', err);
 			});
 	}
 
-	displayRides() {
-		console.log('rides in display', this.state.Rides);
-		// console.log('rides in category', this.state.Rides[0].category);
+	// displayRides() {
+	// 	// event.preventDefault();
+	// 	console.log('rides in display', this.state.Rides);
+	// 	// console.log('rides in display', typeof this.state.Rides);
+	// 	let rideGroups = [];
+	// 	this.state.Rides.forEach((ride) => {
+	// 		rideGroups.push(
+	// 			<tr key={ride._id}>
+	// 				<td>{index + 1}</td>
+	// 				<td>{ride.departure}</td>
+	// 				<td>{ride.destination}</td>
+	// 				<td>
+	// 					<button onClick={() => this.handleDelete(ride._id)}>Delete</button>
+	// 				</td>
+	// 			</tr>
+	// 		);
+	// 	});
 
-		// let rideGroups = [];
-		// if (this.state.Rides.length > 0) {
-		// 	for (let ride of this.state.Rides) {
-		// 		rideGroups.push(<p>{ride.category}</p>);
-		// 	}
-		// 	return rideGroups;
-		// } else {
-		// 	return <div id="NoRides">No rides yet!</div>;
-		// }
-
-		return null;
-	}
+	// 	return rideGroups;
+	// }
 
 	render() {
 		return (
 			<div>
-				<this.displayRides />
+				<table>
+					<thead>
+						<tr>
+							<th>Serial No.</th>
+							<th>Departure</th>
+							<th>Destination</th>
+							<th>Delete</th>
+						</tr>
+					</thead>
+					<tbody>
+						{this.state.Rides.map((ride, index) => (
+							<tr key={ride._id}>
+								<td>{index + 1}</td>
+								<td>{ride.departure}</td>
+								<td>{ride.destination}</td>
+								<td>
+									<button onClick={() => this.handleDelete(ride._id)}>
+										Delete
+									</button>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 			</div>
 		);
 	}

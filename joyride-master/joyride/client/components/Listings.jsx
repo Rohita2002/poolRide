@@ -20,7 +20,7 @@ class Listings extends Component {
 			ChiToChamp: true,
 			searchDate: new Date(),
 			Rides: null,
-            category : ''
+			category: '',
 		};
 
 		this.toggleList = this.toggleList.bind(this);
@@ -197,12 +197,12 @@ class Listings extends Component {
 		this.setState({
 			[name]: value,
 		});
-
-		
 	}
 	render() {
 		// showShowEdit should be flipped to false after testing.
-        const categories = this.state.Rides ?  Array.from(this.state.Rides.keys()) : [];
+		const categories = this.state.Rides
+			? Array.from(this.state.Rides.keys())
+			: [];
 		return (
 			<div className="Listing">
 				{/* <Heading ChiToChamp={this.state.ChiToChamp} /> 
@@ -229,7 +229,10 @@ class Listings extends Component {
 				</select>
 				{this.state.Rides && this.state.category && (
 					<div>
-						<DynamicRides rides={this.state.Rides.get(this.state.category) } shouldShowJoin={true}></DynamicRides>
+						<DynamicRides
+							rides={this.state.Rides.get(this.state.category)}
+							shouldShowJoin={true}
+						></DynamicRides>
 					</div>
 				)}
 			</div>

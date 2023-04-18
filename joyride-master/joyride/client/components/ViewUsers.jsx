@@ -8,12 +8,11 @@ export default class ViewUsers extends Component {
 		super(props);
 
 		this.state = {
-			users: null,
+			Users: [],
 		};
 
 		this.getAllUsers = this.getAllUsers.bind(this);
 		this.handleDelete = this.handleDelete.bind(this);
-		this.displayUsers = this.displayUsers.bind(this);
 
 		this.getAllUsers();
 	}
@@ -24,6 +23,7 @@ export default class ViewUsers extends Component {
 		// Get user id and send it in with the post request.
 
 		self = this;
+		// const arr = [];
 
 		fetch(uri, {
 			method: 'GET',
@@ -40,10 +40,10 @@ export default class ViewUsers extends Component {
 					arr.push(user);
 				});
 				self.setState({
-					users: arr,
+					Users: arr,
 				});
 				console.log('data', data);
-				console.log('users in getting', this.state.users);
+				console.log('users in getting', Users);
 			});
 	}
 
@@ -70,16 +70,35 @@ export default class ViewUsers extends Component {
 			});
 	}
 
-	displayUsers() {
-		console.log('users in display', this.state.users);
-
-		return null;
-	}
-
 	render() {
+		console.log('users in main', this.state.Users);
+
 		return (
 			<div>
-				<this.displayUsers />
+				<table>
+					<thead>
+						<tr>
+							<th>Serial No.</th>
+							<th>First Name</th>
+							<th>Email</th>
+							<th>Delete</th>
+						</tr>
+					</thead>
+					<tbody>
+						{this.state.Users?.map((user, index) => (
+							<tr key={user._id}>
+								<td>{index + 1}</td>
+								<td>{user.firstname}</td>
+								<td>{user.emailID}</td>
+								<td>
+									<button onClick={() => this.handleDelete(user._id)}>
+										Delete
+									</button>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 			</div>
 		);
 	}
