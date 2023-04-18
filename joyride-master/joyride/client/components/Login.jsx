@@ -13,7 +13,7 @@ class Login extends Component {
 			emailID: '',
 			password: '',
 			loggedIn: false,
-			admin: false,
+			isAdmin: false,
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -111,9 +111,19 @@ class Login extends Component {
 				.then(function (jsonresponse) {
 					// If successful.
 					console.log(jsonresponse.token);
+					if (
+						self.state.isAdmin == false &&
+						self.state.emailID === 'admin@gmail.com' &&
+						self.state.password === 'admin'
+					) {
+						console.log('in elseif');
+						self.setState((state) => ({
+							isAdmin: true,
+						}));
+					}
+					// window.location.reload();
 					self.setState((state) => ({
 						loggedIn: true,
-						admin: true,
 					}));
 					window.location.reload();
 				})
@@ -124,10 +134,12 @@ class Login extends Component {
 	}
 
 	render() {
-		if (this.state.loggedIn && this.state.admin) {
-			return <Redirect to="/admin" />;
-		} else if (this.state.loggedIn && !this.state.admin) {
+		if (this.state.loggedIn && this.state.isAdmin === false) {
+			console.log('render in if');
 			return <Redirect to="/" />;
+		} else if (this.state.loggedIn && this.state.isAdmin === true) {
+			console.log('render in else if');
+			return <Redirect to="/admin" />;
 		}
 		return (
 			<div className="LoginContainer">

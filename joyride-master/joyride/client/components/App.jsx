@@ -5,6 +5,7 @@ import {
 	Link,
 	NavLink,
 } from 'react-router-dom';
+// import * as bcrypt from 'bcrypt';
 
 import Listings from './Listings.jsx';
 import NewRide from './NewRide.jsx';
@@ -103,9 +104,9 @@ class App extends Component {
 				console.log('user.emailID :>> ', user.emailID);
 				if (user.emailID === 'admin@gmail.com') {
 					console.log('is admin.......');
-					self.setState((state) => ({
+					self.setState({
 						isAdmin: true,
-					}));
+					});
 				}
 				console.log('json response', jsonresponse);
 			})
@@ -184,28 +185,13 @@ class App extends Component {
 			</div>
 		);
 
-		var logoItem = !this.state.isAdmin ? (
-			<div>
-				<Link to="/">
-					<img id="logo" src={tractor} className="App-logo" alt="logo" />
-				</Link>
-			</div>
-		) : (
-			<div>
-				<Link to="/admin">
-					<img id="logo" src={tractor} className="App-logo" alt="logo" />
-				</Link>
-			</div>
-		);
-
 		return (
 			<Router>
 				<div className="App">
 					<div className="App-header">
-						{/* <Link to="/">
+						<Link to="/">
 							<img id="logo" src={tractor} className="App-logo" alt="logo" />
-						</Link> */}
-						{logoItem}
+						</Link>
 						<h2>Pool&Ride</h2>
 						<DropdownMenu
 							width={this.state.screenWidth}
@@ -216,7 +202,7 @@ class App extends Component {
 						</div>
 					</div>
 					<Route exact path="/" component={Listings} />
-					<Route exact path="/admin" component={Admin} />
+					<Route path="/admin" component={Admin} />
 					<Route path="/newRide" component={NewRide} />
 					<Route path="/register" component={Register} />
 					<Route path="/about" component={About} />
