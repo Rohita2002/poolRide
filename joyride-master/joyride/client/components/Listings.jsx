@@ -39,7 +39,7 @@ class Listings extends Component {
 	 */
 
 	getAllRides() {
-		const uri = `http://localhost:${process.env.PORT}/ride/rides`;
+		const uri = `https://poolnride-api.onrender.com//ride/rides`;
 
 		// Get user id and send it in with the post request.
 
@@ -79,7 +79,7 @@ class Listings extends Component {
 	}
 	getListOfRides() {
 		// Populate the main page with the list of rides in a specific direction.
-		var uri = `http://localhost:${process.env.PORT}/ride`;
+		var uri = `https://poolnride-api.onrender.com//ride`;
 		uri += '?dir=';
 		uri += this.state.ChiToChamp ? 'ChicagoToChampaign' : 'ChampaignToChicago';
 		uri += '&date=';
@@ -168,7 +168,7 @@ class Listings extends Component {
 	}
 	async handleClick() {
 		console.log('clicked.....');
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 

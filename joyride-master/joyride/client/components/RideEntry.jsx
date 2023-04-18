@@ -26,32 +26,30 @@ class RideEntry extends Component {
 		this.handleEditRide = this.handleEditRide.bind(this);
 		this.handleclick = this.handleclick.bind(this);
 		this.checkToken = this.checkToken.bind(this);
-        this.checkToken();
+		this.checkToken();
 		this.getUser(this.props.driverID);
-
 	}
 
 	checkToken = async () => {
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 
-	
-
-		const func = () => fetch(uri, {
-			method: 'POST',
-		}).then(function (response) {
-			// Check if login worked. If not, then show not logged in.
-			if (response.status == 404 || response.status == 401) {
-				self.setState((state) => ({
-					loggedIn: false,
-				}));
-			}
-			const res = response.json();
-			console.log(res);
-			return res;
-		});
-        const auth = await func();
+		const func = () =>
+			fetch(uri, {
+				method: 'POST',
+			}).then(function (response) {
+				// Check if login worked. If not, then show not logged in.
+				if (response.status == 404 || response.status == 401) {
+					self.setState((state) => ({
+						loggedIn: false,
+					}));
+				}
+				const res = response.json();
+				console.log(res);
+				return res;
+			});
+		const auth = await func();
 		self.setState((state) => ({
 			memberID: auth.founduser._id,
 			poolID: this.state.poolDetails.rideID,
@@ -62,9 +60,9 @@ class RideEntry extends Component {
 
 	async handleclick() {
 		console.log('clicked.....');
-		
+
 		const joinPool = async () => {
-			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+			const uri = `https://poolnride-api.onrender.com//ride/joinPool`;
 			const self = this;
 			const body = JSON.stringify(this.state);
 			fetch(uri, {
@@ -154,7 +152,7 @@ class RideEntry extends Component {
 	 * From the ride object, extract the driver's ID to look them up in the DB and get relevant infos.
 	 */
 	getUser(driverID) {
-		var uri = `http://localhost:${process.env.PORT}/user/${driverID}`;
+		var uri = `https://poolnride-api.onrender.com//user/${driverID}`;
 
 		const self = this;
 
@@ -227,20 +225,21 @@ class RideEntry extends Component {
 									{this.props.numberOfSeats}
 								</p>
 							</td>
-							{this.state.shouldShowJoin && <td>
-                               
-								<button
-									type="submit"
-									className={
-										!this.props.numberOfSeats || memberJoined
-											? 'disableBtn'
-											: 'btn'
-									}
-									onClick={this.handleclick}
-								>
-									Join
-								</button>
-							</td>}
+							{this.state.shouldShowJoin && (
+								<td>
+									<button
+										type="submit"
+										className={
+											!this.props.numberOfSeats || memberJoined
+												? 'disableBtn'
+												: 'btn'
+										}
+										onClick={this.handleclick}
+									>
+										Join
+									</button>
+								</td>
+							)}
 							<this.showButton />
 						</tr>
 					</tbody>

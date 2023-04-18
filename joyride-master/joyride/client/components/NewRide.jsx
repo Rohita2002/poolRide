@@ -59,7 +59,7 @@ class NewRide extends Component {
 	 */
 
 	getAllRides() {
-		const uri = `http://localhost:${process.env.PORT}/ride/rides`;
+		const uri = `https://poolnride-api.onrender.com//ride/rides`;
 
 		// Get user id and send it in with the post request.
 
@@ -99,7 +99,7 @@ class NewRide extends Component {
 	}
 	haveVehicleDetails() {
 		console.log('hav veh det fun called');
-		const uri = `http://localhost:${process.env.PORT}/ride/getVehicleDetails`;
+		const uri = `https://poolnride-api.onrender.com//ride/getVehicleDetails`;
 
 		// Get user id and send it in with the post request.
 		if (!this.state.driverID) return;
@@ -126,7 +126,7 @@ class NewRide extends Component {
 	}
 
 	async signedInUser() {
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 
@@ -259,7 +259,7 @@ class NewRide extends Component {
 			});
 		} else {
 			// Make the post request
-			const uri = `http://localhost:${process.env.PORT}/ride`;
+			const uri = `https://poolnride-api.onrender.com//ride`;
 
 			// Get user id and send it in with the post request.
 
@@ -291,7 +291,7 @@ class NewRide extends Component {
 		event.preventDefault();
 
 		// Make the post request
-		const uri = `http://localhost:${process.env.PORT}/ride/vehicleSubmit`;
+		const uri = `https://poolnride-api.onrender.com//ride/vehicleSubmit`;
 
 		// Get user id and send it in with the post request.
 		// console.log('this.state', this.state)
@@ -482,7 +482,7 @@ class NewRide extends Component {
 									<td colSpan="1">
 										<label>Pick your destination</label>
 										{/* <this.DynamicDropDownMenu stop="destination" /> */}
-                                        <input
+										<input
 											className="NewRideFormInput"
 											type="text"
 											name="destination"

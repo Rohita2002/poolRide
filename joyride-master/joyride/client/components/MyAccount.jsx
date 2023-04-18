@@ -24,7 +24,7 @@ class MyAccount extends Component {
 	 * See if user is signed in. If so, open the new ride form. If not, prompt them to sign in.
 	 */
 	signedInUser() {
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 
@@ -64,7 +64,7 @@ class MyAccount extends Component {
 	getRidesByUserID() {
 		console.log('get rides called....');
 		// Populate the main page with the list of rides in a specific direction.
-		var uri = `http://localhost:${process.env.PORT}/ride/bydriver`;
+		var uri = `https://poolnride-api.onrender.com//ride/bydriver`;
 		uri += `?driverID=${this.state.user._id}`;
 
 		console.log(uri);
@@ -94,12 +94,12 @@ class MyAccount extends Component {
 					destination: ride.destination,
 					date: ride.date,
 					numberOfSeats: ride.numberOfSeats + ride.poolMembers.length,
-                    poolMembers : ride.poolMembers,
-                    category : ride.category,
+					poolMembers: ride.poolMembers,
+					category: ride.category,
 					price: ride.price,
 				});
 			}
-            console.log('displayRides', displayRides)
+			console.log('displayRides', displayRides);
 			self.setState((state) => ({
 				rides: displayRides,
 			}));
@@ -131,7 +131,7 @@ class MyAccount extends Component {
 			});
 		} else {
 			// Make the post request
-			const uri = `http://localhost:${process.env.PORT}/user`;
+			const uri = `https://poolnride-api.onrender.com//user`;
 
 			// Get user id and send it in with the post request.
 
@@ -171,7 +171,11 @@ class MyAccount extends Component {
 					<h1>Hi, {this.state.user.firstname} </h1>
 					<p>{this.state.user.aboutme}</p>
 					<p id="userRides">I'm driving!</p>
-					<DynamicRides rides={this.state.rides} shouldShowEdit={false} shouldShowJoin={false}/>
+					<DynamicRides
+						rides={this.state.rides}
+						shouldShowEdit={false}
+						shouldShowJoin={false}
+					/>
 				</div>
 			);
 		} else {

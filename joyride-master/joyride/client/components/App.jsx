@@ -62,7 +62,7 @@ class App extends Component {
 	 * See if user is signed in.
 	 */
 	signedInUser() {
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 

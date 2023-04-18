@@ -26,7 +26,7 @@ class Login extends Component {
 	 * See if user is signed in. If so, open the new ride form. If not, prompt them to sign in.
 	 */
 	signedInUser() {
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
 
 		const self = this;
 
@@ -84,7 +84,7 @@ class Login extends Component {
 			alert('Enter in your password!');
 		} else {
 			// Make the post request
-			const uri = `http://localhost:${process.env.PORT}/user/login`;
+			const uri = `https://poolnride-api.onrender.com//user/login`;
 			// const uri = 'https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m'
 
 			const formdata = JSON.stringify(this.state);
