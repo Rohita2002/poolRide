@@ -46,7 +46,7 @@ class RegisterVehicle extends Component {
 	 * See if user is signed in. If so, open the edit ride form. If not, prompt them to sign in.
 	 */
 	signedInUser() {
-		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com/user/checktoken`;
 
 		const self = this;
 
@@ -84,7 +84,7 @@ class RegisterVehicle extends Component {
 	}
 
 	getUserByEmailID() {
-		var uri = `https://poolnride-api.onrender.com//user/${this.state.emailID}`;
+		var uri = `https://poolnride-api.onrender.com/user/${this.state.emailID}`;
 		self = this;
 		request.get(uri, function (error, response, body) {
 			// Print the error if one occurred
@@ -149,7 +149,7 @@ class RegisterVehicle extends Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		// Make the put request
-		const uri = `https://poolnride-api.onrender.com//user/${this.state.emailID}`;
+		const uri = `https://poolnride-api.onrender.com/user/${this.state.emailID}`;
 
 		const formdata = JSON.stringify(this.state);
 		self = this;

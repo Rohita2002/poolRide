@@ -24,7 +24,7 @@ class MyAccount extends Component {
 	 * See if user is signed in. If so, open the new ride form. If not, prompt them to sign in.
 	 */
 	signedInUser() {
-		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com/user/checktoken`;
 
 		const self = this;
 
@@ -64,7 +64,7 @@ class MyAccount extends Component {
 	getRidesByUserID() {
 		console.log('get rides called....');
 		// Populate the main page with the list of rides in a specific direction.
-		var uri = `https://poolnride-api.onrender.com//ride/bydriver`;
+		var uri = `https://poolnride-api.onrender.com/ride/bydriver`;
 		uri += `?driverID=${this.state.user._id}`;
 
 		console.log(uri);
@@ -131,7 +131,7 @@ class MyAccount extends Component {
 			});
 		} else {
 			// Make the post request
-			const uri = `https://poolnride-api.onrender.com//user`;
+			const uri = `https://poolnride-api.onrender.com/user`;
 
 			// Get user id and send it in with the post request.
 

@@ -68,7 +68,7 @@ export default class Register extends Component {
 		} else {
 			console.log('post request for new user');
 			// Make the post request
-			const uri = `https://poolnride-api.onrender.com//user/signup`;
+			const uri = `https://poolnride-api.onrender.com/user/signup`;
 
 			const formdata = JSON.stringify(this.state);
 

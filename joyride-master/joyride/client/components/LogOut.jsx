@@ -15,7 +15,7 @@ class LogOut extends Component {
 
 	signOut() {
 		// Make the post request
-		const uri = `https://poolnride-api.onrender.com//user/logout`;
+		const uri = `https://poolnride-api.onrender.com/user/logout`;
 
 		self = this;
 

@@ -31,7 +31,7 @@ class RideEntry extends Component {
 	}
 
 	checkToken = async () => {
-		const uri = `https://poolnride-api.onrender.com//user/checktoken`;
+		const uri = `https://poolnride-api.onrender.com/user/checktoken`;
 
 		const self = this;
 
@@ -62,7 +62,7 @@ class RideEntry extends Component {
 		console.log('clicked.....');
 
 		const joinPool = async () => {
-			const uri = `https://poolnride-api.onrender.com//ride/joinPool`;
+			const uri = `https://poolnride-api.onrender.com/ride/joinPool`;
 			const self = this;
 			const body = JSON.stringify(this.state);
 			fetch(uri, {
@@ -152,7 +152,7 @@ class RideEntry extends Component {
 	 * From the ride object, extract the driver's ID to look them up in the DB and get relevant infos.
 	 */
 	getUser(driverID) {
-		var uri = `https://poolnride-api.onrender.com//user/${driverID}`;
+		var uri = `https://poolnride-api.onrender.com/user/${driverID}`;
 
 		const self = this;
 

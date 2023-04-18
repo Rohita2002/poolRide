@@ -18,7 +18,7 @@ export default class ViewUsers extends Component {
 	}
 
 	getAllUsers() {
-		const uri = `https://poolnride-api.onrender.com//user/allusers`;
+		const uri = `https://poolnride-api.onrender.com/user/allusers`;
 
 		// Get user id and send it in with the post request.
 
@@ -50,7 +50,7 @@ export default class ViewUsers extends Component {
 	handleDelete(id) {
 		console.log('user to be deleted:', id);
 
-		const uri = `https://poolnride-api.onrender.com//user/${id}`;
+		const uri = `https://poolnride-api.onrender.com/user/${id}`;
 
 		self = this;
 
