@@ -31,51 +31,69 @@ export default class RideController implements Controller {
 		this.router.get(`${this.path}/:id`, this.getRideById);
 		this.router.put(`${this.path}/:id`, this.modifyRide);
 		this.router.delete(`${this.path}/:id`, this.deleteRide);
+		// this.router.delete(`${this.path}/delete`, this.deletePool);
 		this.router.post(this.path, this.createRide);
 		this.router.post(`${this.path}/getVehicleDetails`, this.getVehicle);
 		this.router.post(`${this.path}/vehicleSubmit`, this.addVehicle);
 	}
 
-	private joinPool = (
+	private joinPool = (request: express.Request, response: express.Response) => {
+		// var ObjectId = require('mongoose').Types.ObjectId;
+		const { memberID, poolID } = request.body;
+
+		this.ride
+			.updateOne(
+				{
+					_id: Types.ObjectId(poolID),
+				},
+				{
+					$push: {
+						poolMembers: {
+							memberID: memberID,
+						},
+					},
+				}
+			)
+			.then(() => {
+				response.sendStatus(200);
+			})
+			.catch((err) => {
+				console.log('err in updating poolmembers arr', err);
+				response.sendStatus(400);
+			});
+	};
+
+	// private deletePool = (
+	// 	request: express.Request,
+	// 	response: express.Response
+	// ) => {
+	// 	// var ObjectId = require('mongoose').Types.ObjectId;
+	// 	console.log('poolid from backend', request.body.poolID);
+
+	// 	this.ride
+	// 		.findByIdAndDelete(Types.ObjectId(request.body.poolID))
+	// 		.then((successResponse) => {
+	// 			if (successResponse) {
+	// 				response.sendStatus(200);
+	// 			} else {
+	// 				response.sendStatus(404);
+	// 			}
+	// 		});
+	// };
+
+	private getEveryRide = (
 		request: express.Request,
 		response: express.Response
 	) => {
-		// var ObjectId = require('mongoose').Types.ObjectId;
-		const {memberID , poolID} = request.body;
-
-		this.ride.updateOne({
-			"_id" : Types.ObjectId( poolID )
-		} , {
-			$push : {
-				poolMembers : 	{
-					memberID : memberID,
-				}
-			}
-
-			
-		})
-		.then(() => {
-			response.sendStatus(200);
-		}).catch((err) => {
-			console.log('err in updating poolmembers arr' , err);
-			response.sendStatus(400);
-			
-		})
-	}
-
-    private getEveryRide = (
-		request: express.Request,
-		response: express.Response
-	) =>{
-
-        this.ride.find()
-        .then((data) => {
-            response.send(data)
-        })
-        .catch((err) => {
-            console.log('err in geteveryride' , err);
-        })
-    }
+		this.ride
+			.find()
+			.then((data) => {
+				response.send(data);
+			})
+			.catch((err) => {
+				console.log('err in geteveryride', err);
+			});
+	};
 	private addVehicle = (
 		request: express.Request,
 		response: express.Response
@@ -92,13 +110,16 @@ export default class RideController implements Controller {
 			vehicleSpecification,
 			driverID,
 		});
-		createdVehicle.save().then((savedPost) => {
-            console.log('savedPost', savedPost)
-            response.send(savedPost);
-		}).catch((err) => {
-            console.log('err in posting vehicle details' , err)
-            response.sendStatus(404);   
-        })
+		createdVehicle
+			.save()
+			.then((savedPost) => {
+				console.log('savedPost', savedPost);
+				response.send(savedPost);
+			})
+			.catch((err) => {
+				console.log('err in posting vehicle details', err);
+				response.sendStatus(404);
+			});
 	};
 	private getVehicle = (
 		request: express.Request,
@@ -119,7 +140,7 @@ export default class RideController implements Controller {
 				// response.send(founduser);
 			} else {
 				console.log('user not found');
-				response.sendStatus(400)
+				response.sendStatus(400);
 			}
 		});
 	};
@@ -169,7 +190,7 @@ export default class RideController implements Controller {
 	) => {
 		// Get the driverID
 		console.log('rides by driver called');
-		
+
 		const driverID = request.query?.driverID?.valueOf();
 		const date = new Date();
 
@@ -185,11 +206,11 @@ export default class RideController implements Controller {
 					})
 					.sort({ date: '1' })
 					.then((rides) => {
-						console.log('rides by driver', rides)
+						console.log('rides by driver', rides);
 						response.send(rides);
 					});
 			} else {
-				console.log('no driver id')
+				console.log('no driver id');
 				response.send();
 			}
 		} catch {
@@ -250,7 +271,7 @@ export default class RideController implements Controller {
 		response: express.Response
 	) => {
 		const id = request.params.id;
-		this.ride.findByIdAndDelete(id).then((successResponse) => {
+		this.ride.findByIdAndDelete(Types.ObjectId(id)).then((successResponse) => {
 			if (successResponse) {
 				response.sendStatus(200);
 			} else {

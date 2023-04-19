@@ -28,26 +28,26 @@ class DynamicRides extends Component {
 	RidesByDate() {
 		let rideGroups = [];
 		if (this.props.rides.length > 0) {
-			let startDate = this.withoutTime(this.props.rides[0].date);
-			rideGroups.push(
-				<h1 key={startDate}>
-					{startDate.getMonth() + 1} / {startDate.getDate()}
-				</h1>
-			);
+			// let startDate = this.withoutTime(this.props.rides[0].date);
+			// rideGroups.push(
+			// 	<h1 key={startDate}>
+			// 		{startDate.getMonth() + 1} / {startDate.getDate()}
+			// 	</h1>
+			// );
 
 			for (let ride of this.props.rides) {
-				if (this.withoutTime(ride.date) > startDate) {
-					startDate = this.withoutTime(ride.date);
-					rideGroups.push(
-						<h1 key={startDate}>
-							{startDate.getMonth() + 1} / {startDate.getDate()}
-						</h1>
-					);
-				}
+				// if (this.withoutTime(ride.date) > startDate) {
+				// 	startDate = this.withoutTime(ride.date);
+				// 	rideGroups.push(
+				// 		<h1 key={startDate}>
+				// 			{startDate.getMonth() + 1} / {startDate.getDate()}
+				// 		</h1>
+				// 	);
+				// }
 				rideGroups.push(
 					<RideEntry
 						key={ride.key}
-						rideID={ride._id}
+						rideID={ride.rideID}
 						driverID={ride.driverID}
 						departure={ride.departure}
 						destination={ride.destination}
@@ -56,6 +56,7 @@ class DynamicRides extends Component {
 						price={ride.price}
 						shouldShowEdit={this.props.shouldShowEdit}
 						shouldShowJoin={this.props.shouldShowJoin}
+						shouldShowDelete={this.props.shouldShowDelete}
                         poolMembers = {ride.poolMembers}
 					/>
 				);

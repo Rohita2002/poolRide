@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import LocationConstants from './LocationConstants.ts';
+// import LocationConstants from './LocationConstants.ts';
 import DynamicRides from './DynamicRides';
 
 import request from 'request';
@@ -18,6 +18,8 @@ class MyAccount extends Component {
 		};
 
 		this.signedInUser();
+
+		
 	}
 
 	/**
@@ -94,64 +96,66 @@ class MyAccount extends Component {
 					destination: ride.destination,
 					date: ride.date,
 					numberOfSeats: ride.numberOfSeats + ride.poolMembers.length,
-                    poolMembers : ride.poolMembers,
-                    category : ride.category,
+					poolMembers: ride.poolMembers,
+					category: ride.category,
 					price: ride.price,
 				});
 			}
-            console.log('displayRides', displayRides)
+			console.log('displayRides', displayRides);
 			self.setState((state) => ({
 				rides: displayRides,
 			}));
 		});
 	}
 
+	
+
 	/**
 	 * Update state when values are changed.
 	 * @param {} event
 	 */
-	handleChange(event) {
-		const target = event.target;
-		const value = target.value;
-		const name = target.name;
+	// handleChange(event) {
+	// 	const target = event.target;
+	// 	const value = target.value;
+	// 	const name = target.name;
 
-		this.setState({
-			[name]: value,
-		});
-	}
+	// 	this.setState({
+	// 		[name]: value,
+	// 	});
+	// }
 
 	/**
 	 * Handle the form submit by creating a post request.
 	 */
-	handleSubmit(event) {
-		event.preventDefault();
-		if (!this.state.firstname || !this.state.lastname) {
-			this.setState({
-				errorMessage: 'Need to fill in a name!',
-			});
-		} else {
-			// Make the post request
-			const uri = `http://localhost:${process.env.PORT}/user`;
+	// handleSubmit(event) {
+	// 	event.preventDefault();
+	// 	if (!this.state.firstname || !this.state.lastname) {
+	// 		this.setState({
+	// 			errorMessage: 'Need to fill in a name!',
+	// 		});
+	// 	} else {
+	// 		// Make the post request
+	// 		const uri = `http://localhost:${process.env.PORT}/user`;
 
-			// Get user id and send it in with the post request.
+	// 		// Get user id and send it in with the post request.
 
-			const formdata = JSON.stringify(this.state);
+	// 		const formdata = JSON.stringify(this.state);
 
-			fetch(uri, {
-				method: 'POST',
-				body: formdata,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(function (response) {
-					return response.json();
-				})
-				.catch(function (err) {
-					console.log('Request failed', err);
-				});
-		}
-	}
+	// 		fetch(uri, {
+	// 			method: 'POST',
+	// 			body: formdata,
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 		})
+	// 			.then(function (response) {
+	// 				return response.json();
+	// 			})
+	// 			.catch(function (err) {
+	// 				console.log('Request failed', err);
+	// 			});
+	// 	}
+	// }
 
 	/**
 	 * The user's account page.
@@ -165,13 +169,17 @@ class MyAccount extends Component {
 		}
 
 		if (this.state.user !== null) {
-			console.log('this.state.rides', this.state.rides);
+			console.log('My pools', this.state.rides);
 			return (
 				<div className="UserAccountContainer">
 					<h1>Hi, {this.state.user.firstname} </h1>
-					<p>{this.state.user.aboutme}</p>
 					<p id="userRides">I'm driving!</p>
-					<DynamicRides rides={this.state.rides} shouldShowEdit={false} shouldShowJoin={false}/>
+					<DynamicRides
+						rides={this.state.rides}
+						shouldShowEdit={false}
+						shouldShowJoin={false}
+						shouldShowDelete={true}
+					/>
 				</div>
 			);
 		} else {

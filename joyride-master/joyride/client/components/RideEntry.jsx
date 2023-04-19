@@ -13,6 +13,7 @@ class RideEntry extends Component {
 			user: '',
 			userNotFound: false,
 			shouldShowEdit: this.props.shouldShowEdit,
+			shouldShowDelete: this.props.shouldShowDelete,
 			shouldShowJoin: this.props.shouldShowJoin,
 			editRide: false,
 			poolDetails: this.props,
@@ -25,10 +26,10 @@ class RideEntry extends Component {
 		this.showPrice = this.showPrice.bind(this);
 		this.handleEditRide = this.handleEditRide.bind(this);
 		this.handleclick = this.handleclick.bind(this);
+		this.handleclickDelete = this.handleclickDelete.bind(this);
 		this.checkToken = this.checkToken.bind(this);
-        this.checkToken();
+		this.checkToken();
 		this.getUser(this.props.driverID);
-
 	}
 
 	checkToken = async () => {
@@ -36,22 +37,21 @@ class RideEntry extends Component {
 
 		const self = this;
 
-	
-
-		const func = () => fetch(uri, {
-			method: 'POST',
-		}).then(function (response) {
-			// Check if login worked. If not, then show not logged in.
-			if (response.status == 404 || response.status == 401) {
-				self.setState((state) => ({
-					loggedIn: false,
-				}));
-			}
-			const res = response.json();
-			console.log(res);
-			return res;
-		});
-        const auth = await func();
+		const func = () =>
+			fetch(uri, {
+				method: 'POST',
+			}).then(function (response) {
+				// Check if login worked. If not, then show not logged in.
+				if (response.status == 404 || response.status == 401) {
+					self.setState((state) => ({
+						loggedIn: false,
+					}));
+				}
+				const res = response.json();
+				console.log(res);
+				return res;
+			});
+		const auth = await func();
 		self.setState((state) => ({
 			memberID: auth.founduser._id,
 			poolID: this.state.poolDetails.rideID,
@@ -62,7 +62,7 @@ class RideEntry extends Component {
 
 	async handleclick() {
 		console.log('clicked.....');
-		
+
 		const joinPool = async () => {
 			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
 			const self = this;
@@ -85,6 +85,30 @@ class RideEntry extends Component {
 		const joinpool = await joinPool();
 		console.log('joinpool', joinpool);
 		window.location.reload();
+	}
+	async handleclickDelete() {
+		console.log('clicked Delete.....');
+
+		console.log('ride to be deleted:', this.state.poolID);
+
+		const uri = `http://localhost:${process.env.PORT}/ride/${this.state.poolID}`;
+
+		self = this;
+
+		fetch(uri, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				if (response.status === 200) {
+					window.location.reload();
+				}
+			})
+			.catch((err) => {
+				console.log('Request failed', err);
+			});
 	}
 
 	/**
@@ -227,20 +251,32 @@ class RideEntry extends Component {
 									{this.props.numberOfSeats}
 								</p>
 							</td>
-							{this.state.shouldShowJoin && <td>
-                               
-								<button
-									type="submit"
-									className={
-										!this.props.numberOfSeats || memberJoined
-											? 'disableBtn'
-											: 'btn'
-									}
-									onClick={this.handleclick}
-								>
-									Join
-								</button>
-							</td>}
+							{this.state.shouldShowJoin && (
+								<td>
+									<button
+										type="submit"
+										className={
+											!this.props.numberOfSeats || memberJoined
+												? 'disableBtn'
+												: 'btn'
+										}
+										onClick={this.handleclick}
+									>
+										Join
+									</button>
+								</td>
+							)}
+							{this.state.shouldShowDelete && (
+								<td>
+									<button
+										type="submit"
+										className={'btn'}
+										onClick={this.handleclickDelete}
+									>
+										Delete
+									</button>
+								</td>
+							)}
 							<this.showButton />
 						</tr>
 					</tbody>
