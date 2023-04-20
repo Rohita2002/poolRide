@@ -88,7 +88,7 @@ class MyAccount extends Component {
 			for (const ride of rides) {
 				displayRides.push({
 					key: ride._id,
-					rideID: ride._id,
+					_id: ride._id,
 					driverID: ride.driverID,
 					departure: ride.departure,
 					destination: ride.destination,

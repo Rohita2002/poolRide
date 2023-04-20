@@ -54,39 +54,65 @@ class RideEntry extends Component {
 				return res;
 			});
 		const auth = await func();
-		self.setState((state) => ({
+		self.setState({
 			memberID: auth.founduser._id,
 			poolID: this.state.poolDetails.rideID,
-		}));
+		});
 
-		// console.log('poolDetails', this.state.poolDetails);
+		console.log('state', this.state);
 	};
 
 	async handleclick() {
-		console.log('clicked.....');
+		console.log('clicked join.....');
 
-		const joinPool = async () => {
-			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
-			const self = this;
-			const body = JSON.stringify(this.state);
-			fetch(uri, {
-				method: 'POST',
-				body,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}).then((response) => {
+		// const joinPool = async () => {
+		// 	const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+		// 	const self = this;
+		// 	const body = JSON.stringify(this.state);
+		// 	console.log('this.state.poolid', this.state.poolID);
+		// 	fetch(uri, {
+		// 		method: 'POST',
+		// 		body,
+		// 		headers: {
+		// 			'Content-Type': 'application/json',
+		// 		},
+		// 	}).then((response) => {
+		// 		if (response.status === 200) {
+		// 			console.log('joined');
+		// 		} else {
+		// 			console.log('not joined');
+		// 		}
+		// 	});
+		// };
+
+		// const joinpool = await joinPool();
+
+		console.log('ride to be joined:', this.state);
+
+		const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+
+		self = this;
+
+		const body = JSON.stringify(this.state);
+
+		fetch(uri, {
+			method: 'POST',
+			body,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
 				if (response.status === 200) {
 					console.log('joined');
-				} else {
-					console.log('not joined');
+					window.location.reload();
 				}
+			})
+			.catch((err) => {
+				console.log('Request failed', err);
 			});
-		};
-
-		const joinpool = await joinPool();
-		console.log('joinpool', joinpool);
-		window.location.reload();
+		// console.log('joinpool', joinpool);
+		// window.location.reload();
 	}
 
 	async handleclickDelete() {
@@ -252,6 +278,7 @@ class RideEntry extends Component {
 				console.log('this.state?.memberID', this.state?.memberID);
 				if (this.state?.memberID === element.memberID) memberJoined = true;
 			});
+			if (this.props.driverID === this.state?.memberID) memberJoined = true;
 			return (
 				<table className="RideEntry">
 					<tbody>
