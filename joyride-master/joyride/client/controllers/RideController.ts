@@ -240,10 +240,16 @@ export default class RideController implements Controller {
 		response: express.Response
 	) => {
 		const id = request.params.id;
-		const rideData = request.body;
-		this.ride.findByIdAndUpdate(id, rideData, { new: true }).then((ride) => {
-			response.send(ride);
-		});
+		// const rideData = request.body;
+		this.ride
+			.findByIdAndUpdate(id, { completed: true }, { new: true })
+			.then(() => {
+				response.sendStatus(200);
+			})
+			.catch((err) => {
+				console.log('err in updating completed variable', err);
+				response.sendStatus(400);
+			});
 	};
 
 	/**

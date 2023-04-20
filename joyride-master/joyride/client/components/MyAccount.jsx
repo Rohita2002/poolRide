@@ -18,8 +18,6 @@ class MyAccount extends Component {
 		};
 
 		this.signedInUser();
-
-		
 	}
 
 	/**
@@ -95,6 +93,7 @@ class MyAccount extends Component {
 					departure: ride.departure,
 					destination: ride.destination,
 					date: ride.date,
+					completed: ride.completed,
 					numberOfSeats: ride.numberOfSeats + ride.poolMembers.length,
 					poolMembers: ride.poolMembers,
 					category: ride.category,
@@ -107,8 +106,6 @@ class MyAccount extends Component {
 			}));
 		});
 	}
-
-	
 
 	/**
 	 * Update state when values are changed.
@@ -179,6 +176,7 @@ class MyAccount extends Component {
 						shouldShowEdit={false}
 						shouldShowJoin={false}
 						shouldShowDelete={true}
+						shouldShowComplete={true}
 					/>
 				</div>
 			);

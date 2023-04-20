@@ -44,22 +44,26 @@ class DynamicRides extends Component {
 				// 		</h1>
 				// 	);
 				// }
-				rideGroups.push(
-					<RideEntry
-						key={ride.key}
-						rideID={ride.rideID}
-						driverID={ride.driverID}
-						departure={ride.departure}
-						destination={ride.destination}
-						date={ride.date}
-						numberOfSeats={ride.numberOfSeats - ride.poolMembers?.length}
-						price={ride.price}
-						shouldShowEdit={this.props.shouldShowEdit}
-						shouldShowJoin={this.props.shouldShowJoin}
-						shouldShowDelete={this.props.shouldShowDelete}
-                        poolMembers = {ride.poolMembers}
-					/>
-				);
+				if (!ride.completed) {
+					rideGroups.push(
+						<RideEntry
+							key={ride.key}
+							rideID={ride.rideID}
+							driverID={ride.driverID}
+							departure={ride.departure}
+							destination={ride.destination}
+							date={ride.date}
+							completed={ride.completed}
+							numberOfSeats={ride.numberOfSeats - ride.poolMembers?.length}
+							price={ride.price}
+							shouldShowEdit={this.props.shouldShowEdit}
+							shouldShowJoin={this.props.shouldShowJoin}
+							shouldShowDelete={this.props.shouldShowDelete}
+							shouldShowComplete={this.props.shouldShowComplete}
+							poolMembers={ride.poolMembers}
+						/>
+					);
+				}
 			}
 			return rideGroups;
 		} else {

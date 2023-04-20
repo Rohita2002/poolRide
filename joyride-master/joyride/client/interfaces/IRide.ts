@@ -14,4 +14,5 @@ export interface IRide {
 			memberID: String;
 		}
 	];
+	completed: Boolean;
 }

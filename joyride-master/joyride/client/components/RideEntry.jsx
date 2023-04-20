@@ -15,6 +15,7 @@ class RideEntry extends Component {
 			shouldShowEdit: this.props.shouldShowEdit,
 			shouldShowDelete: this.props.shouldShowDelete,
 			shouldShowJoin: this.props.shouldShowJoin,
+			shouldShowComplete: this.props.shouldShowComplete,
 			editRide: false,
 			poolDetails: this.props,
 			poolID: '',
@@ -27,6 +28,7 @@ class RideEntry extends Component {
 		this.handleEditRide = this.handleEditRide.bind(this);
 		this.handleclick = this.handleclick.bind(this);
 		this.handleclickDelete = this.handleclickDelete.bind(this);
+		this.handleclickComplete = this.handleclickComplete.bind(this);
 		this.checkToken = this.checkToken.bind(this);
 		this.checkToken();
 		this.getUser(this.props.driverID);
@@ -86,6 +88,7 @@ class RideEntry extends Component {
 		console.log('joinpool', joinpool);
 		window.location.reload();
 	}
+
 	async handleclickDelete() {
 		console.log('clicked Delete.....');
 
@@ -109,6 +112,32 @@ class RideEntry extends Component {
 			.catch((err) => {
 				console.log('Request failed', err);
 			});
+	}
+
+	async handleclickComplete() {
+		console.log('clicked complete.....');
+
+		console.log('ride to be completed:', this.state.poolID);
+
+		const uri = `http://localhost:${process.env.PORT}/ride/${this.state.poolID}`;
+
+		// const formdata = JSON.stringify(this.state);
+		self = this;
+
+		fetch(uri, {
+			method: 'PUT',
+			// body: formdata,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then((response) => {
+			if (response.status === 200) {
+				console.log('completed ');
+				window.location.reload();
+			} else {
+				console.log('not completed');
+			}
+		});
 	}
 
 	/**
@@ -274,6 +303,17 @@ class RideEntry extends Component {
 										onClick={this.handleclickDelete}
 									>
 										Delete
+									</button>
+								</td>
+							)}
+							{this.state.shouldShowComplete && (
+								<td>
+									<button
+										type="submit"
+										className={'btn'}
+										onClick={this.handleclickComplete}
+									>
+										Complete
 									</button>
 								</td>
 							)}

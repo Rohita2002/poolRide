@@ -136,7 +136,7 @@ class Login extends Component {
 	render() {
 		if (this.state.loggedIn && this.state.isAdmin === false) {
 			console.log('render in if');
-			return <Redirect to="/" />;
+			return <Redirect to="/homeUser" />;
 		} else if (this.state.loggedIn && this.state.isAdmin === true) {
 			console.log('render in else if');
 			return <Redirect to="/admin" />;

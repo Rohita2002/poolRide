@@ -27,6 +27,7 @@ class NewRide extends Component {
 			numberOfSeats: 0,
 			vehicleDetails: '',
 			haveVehicle: false,
+			completed: false,
 
 			vehicleType: '',
 			vehicleRegNo: '',
@@ -382,7 +383,7 @@ class NewRide extends Component {
 		}
 
 		if (this.state.submitted) {
-			return <Redirect to="/" />;
+			return <Redirect to="/homeuser" />;
 		}
 		if (this.state.haveVehicle) {
 			console.log('have vehicle');
@@ -482,7 +483,7 @@ class NewRide extends Component {
 									<td colSpan="1">
 										<label>Pick your destination</label>
 										{/* <this.DynamicDropDownMenu stop="destination" /> */}
-                                        <input
+										<input
 											className="NewRideFormInput"
 											type="text"
 											name="destination"

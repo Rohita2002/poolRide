@@ -19,6 +19,7 @@ import EditRide from './EditRide.jsx';
 import Admin from './Admin.jsx';
 import ViewPools from './ViewPools.jsx';
 import ViewUsers from './ViewUsers.jsx';
+import Landing from './Landing.jsx';
 
 import '../css/App.css';
 
@@ -193,9 +194,16 @@ class App extends Component {
 			<Router>
 				<div className="App">
 					<div className="App-header">
-						<Link to="/">
-							<img id="logo" src={tractor} className="App-logo" alt="logo" />
-						</Link>
+						{this.state.isUserSignedIn && (
+							<Link to="/homeuser">
+								<img id="logo" src={tractor} className="App-logo" alt="logo" />
+							</Link>
+						)}
+						{!this.state.isUserSignedIn && (
+							<Link to="/">
+								<img id="logo" src={tractor} className="App-logo" alt="logo" />
+							</Link>
+						)}
 						<h2>Pool&Ride</h2>
 						<DropdownMenu
 							width={this.state.screenWidth}
@@ -205,8 +213,9 @@ class App extends Component {
 							{navbarItem}
 						</div>
 					</div>
-					<Route exact path="/" component={Listings} />
+					<Route exact path="/" component={Landing} />
 					<Route path="/admin" component={Admin} />
+					<Route path="/homeuser" component={Listings} />
 					<Route path="/newRide" component={NewRide} />
 					<Route path="/register" component={Register} />
 					<Route path="/about" component={About} />
