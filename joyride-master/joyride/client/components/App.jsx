@@ -118,7 +118,11 @@ class App extends Component {
 	render() {
 		var navbarItem = !this.state.isAdmin ? (
 			<div>
-				<NavLink className="menuOption" to="/about">
+				<NavLink
+					className="menuOption"
+					to="/about"
+					hidden={this.state.isUserSignedIn}
+				>
 					About me
 				</NavLink>
 				<NavLink
