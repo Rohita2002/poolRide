@@ -10,47 +10,52 @@ class Feedback extends Component {
 			emailID: '',
 
 			loggedIn: false,
-			driverID: this.props.driverID,
+			driverID: JSON.parse(localStorage.getItem('driverID')),
 
 			driverName: '',
-			feedback: '',
-			submitted: false,
+			message: '',
+			// submitted: false,
 			stars: 0, // added rating state variable with default value 0
 		};
 
-		this.getDriverName = this.getDriverName.bind(this);
+		// this.getDriverName = this.getDriverName.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleStarClick = this.handleStarClick.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 
 		this.signedInUser();
+		this.getDriverName();
 	}
 
-	async signedInUser() {
+	signedInUser() {
 		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
 
 		const self = this;
 
-		await fetch(uri, {
+		fetch(uri, {
 			method: 'POST',
 		})
 			.then(function (response) {
 				// Check if login worked. If not, then show not logged in.
 				if (response.status == 404 || response.status == 401) {
-					self.setState((state) => ({
-						loggedin: false,
-					}));
+					self.setState({
+						loggedIn: false,
+					});
+				} else {
+					self.setState({
+						loggedIn: true,
+					});
 				}
 				return response.json();
 			})
 			.then(function (signinResult) {
 				// If there is a user signed in, populate the fisrt and last name fields.
 				if (signinResult.success) {
-					self.setState((state) => ({
+					self.setState({
 						userID: signinResult.founduser._id,
 						emailID: signinResult.founduser.emailID,
 						username: signinResult.founduser.username,
-					}));
+					});
 				}
 			})
 			.catch(function (err) {
@@ -58,7 +63,8 @@ class Feedback extends Component {
 			});
 	}
 
-	async getDriverName() {
+	getDriverName() {
+		console.log('getting driver name', this.state.driverID);
 		var uri = `http://localhost:${process.env.PORT}/user/${this.state.driverID}`;
 		self = this;
 
@@ -83,24 +89,31 @@ class Feedback extends Component {
 	handleSubmit(event) {
 		event.preventDefault();
 
-		//? add accorind to backend
-		const uri = `http://localhost:${process.env.PORT}/user/${this.state.driverID}`;
+		console.log('clicked on submit feedback');
 
-		const feedback = JSON.stringify(this.state);
-		self = this;
+		console.log(this.state);
+
+		const uri = `http://localhost:${process.env.PORT}/user/addFeedback`;
+
+		const body = JSON.stringify(this.state);
 
 		fetch(uri, {
-			method: 'PUT',
-			body: feedback,
+			method: 'POST',
+			body: body,
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		})
-			.then(function (response) {
-				self.setState({
-					submitted: true,
-				});
-				return response.json();
+			.then((response) => {
+				if (response.status === 200) {
+					this.setState({
+						submitted: true,
+					});
+
+					console.log('feedback added');
+				} else {
+					console.log('feedback not added', response);
+				}
 			})
 			.catch(function (err) {
 				console.log('Request failed: ', err);
@@ -123,7 +136,11 @@ class Feedback extends Component {
 	}
 
 	render() {
-		const stars = this.state.stars;
+		// const stars = this.state.stars;
+		console.log(this.state.emailID);
+		console.log(this.state.userID);
+		console.log(this.state.username);
+		console.log(this.state.driverName);
 		return (
 			<div>
 				<form className="FeedbackForm" onSubmit={this.handleSubmit}>
@@ -132,7 +149,7 @@ class Feedback extends Component {
 						type="text"
 						name="username"
 						value={this.state.username}
-						onChange={this.handleChange}
+						readOnly
 					/>
 
 					<label className="FeedbackFormInput">Email Address</label>
@@ -140,26 +157,26 @@ class Feedback extends Component {
 						type="text"
 						name="emailID"
 						value={this.state.emailID}
-						onChange={this.handleChange}
+						readOnly
 					/>
 					<label className="FeedbackFormInput">To driver</label>
 					<input
 						type="text"
 						name="driverName"
 						value={this.state.driverName}
-						onChange={this.handleChange}
+						readOnly
 					/>
-					<label className="FeedbackFormInput">feedback</label>
+					<label className="FeedbackFormInput">Message</label>
 					<input
 						type="text"
-						name="feedback"
-						value={this.state.feedback}
+						name="message"
+						value={this.state.message}
 						onChange={this.handleChange}
 					/>
 					<div style={{ cursor: 'pointer' }}>
 						{[1, 2, 3, 4, 5].map((star) => (
 							<span key={star} onClick={() => this.handleStarClick(star)}>
-								{star <= stars ? '★' : '☆'}
+								{star <= this.state.stars ? '★' : '☆'}
 							</span>
 						))}
 					</div>

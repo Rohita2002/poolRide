@@ -16,10 +16,12 @@ class RideEntry extends Component {
 			shouldShowDelete: this.props.shouldShowDelete,
 			shouldShowJoin: this.props.shouldShowJoin,
 			shouldShowComplete: this.props.shouldShowComplete,
+			shouldShowFeedback: this.props.shouldShowFeedback,
 			editRide: false,
 			poolDetails: this.props,
 			poolID: '',
 			memberID: '',
+			hasGivenFeedback: false,
 		};
 
 		this.showDate = this.showDate.bind(this);
@@ -29,6 +31,7 @@ class RideEntry extends Component {
 		this.handleclick = this.handleclick.bind(this);
 		this.handleclickDelete = this.handleclickDelete.bind(this);
 		this.handleclickComplete = this.handleclickComplete.bind(this);
+		this.handleclickFeedback = this.handleclickFeedback.bind(this);
 		this.checkToken = this.checkToken.bind(this);
 		this.checkToken();
 		this.getUser(this.props.driverID);
@@ -65,28 +68,6 @@ class RideEntry extends Component {
 	async handleclick() {
 		console.log('clicked join.....');
 
-		// const joinPool = async () => {
-		// 	const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
-		// 	const self = this;
-		// 	const body = JSON.stringify(this.state);
-		// 	console.log('this.state.poolid', this.state.poolID);
-		// 	fetch(uri, {
-		// 		method: 'POST',
-		// 		body,
-		// 		headers: {
-		// 			'Content-Type': 'application/json',
-		// 		},
-		// 	}).then((response) => {
-		// 		if (response.status === 200) {
-		// 			console.log('joined');
-		// 		} else {
-		// 			console.log('not joined');
-		// 		}
-		// 	});
-		// };
-
-		// const joinpool = await joinPool();
-
 		console.log('ride to be joined:', this.state);
 
 		const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
@@ -111,8 +92,6 @@ class RideEntry extends Component {
 			.catch((err) => {
 				console.log('Request failed', err);
 			});
-		// console.log('joinpool', joinpool);
-		// window.location.reload();
 	}
 
 	async handleclickDelete() {
@@ -168,6 +147,16 @@ class RideEntry extends Component {
 				console.log('not completed');
 			}
 		});
+	}
+
+	handleclickFeedback() {
+		console.log('clicked feedback...');
+
+		localStorage.setItem(
+			'driverID',
+			JSON.stringify(this.state.poolDetails.driverID)
+		);
+		window.location.replace('/feedback');
 	}
 
 	/**
@@ -252,6 +241,14 @@ class RideEntry extends Component {
 			} else if (response.statusCode === 200) {
 				self.setState({
 					user: JSON.parse(body),
+				});
+
+				const hasGivenFeedback = self.state.user?.feedback.some(
+					(feedback) => feedback.fromID === self.state.memberID
+				);
+
+				self.setState({
+					hasGivenFeedback: hasGivenFeedback,
 				});
 
 				console.log('user in ride entry:' + self.state.user.firstname);
@@ -345,6 +342,19 @@ class RideEntry extends Component {
 										onClick={this.handleclickComplete}
 									>
 										Complete
+									</button>
+								</td>
+							)}
+							{this.state.shouldShowFeedback && (
+								<td>
+									<button
+										type="submit"
+										className={
+											this.state.hasGivenFeedback ? 'disableBtn' : 'btn'
+										}
+										onClick={this.handleclickFeedback}
+									>
+										Give Feedback
 									</button>
 								</td>
 							)}

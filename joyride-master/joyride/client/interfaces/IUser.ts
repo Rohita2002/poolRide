@@ -8,11 +8,13 @@ export interface IUser {
 	emailID: String;
 	mobileNumber: String;
 	password: String;
-	// feedback: {
-	// 	ToDriver: String;
-	// 	message: String;
-	// 	rating: String;
-	// };
+	feedback: [
+		{
+			fromID: String;
+			message: String;
+			rating: Number;
+		}
+	];
 
 	// aboutme: String,
 	// license: String

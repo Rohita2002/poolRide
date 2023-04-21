@@ -7,6 +7,13 @@ import { IUser } from '../interfaces/IUser';
  * Schema for basic user object in MongoDB.
  * email must be @illinois.edu
  */
+
+// const feedbackSchema = new Schema({
+// 	fromID: String,
+// 	message: String,
+// 	rating: Number,
+// });
+
 const userSchema = new Schema({
 	firstname: String,
 	lastname: String,
@@ -14,14 +21,14 @@ const userSchema = new Schema({
 	emailID: String,
 	mobileNumber: String,
 	password: String,
-	// feedback: {
-	// 	ToDriver: String,
-	// 	message: String,
-	// 	rating: String,
-	// },
-
-	// license: String,
-	// aboutme: String
+	feedback: [
+		{
+			fromID: String,
+			message: String,
+			rating: Number,
+		},
+	],
+	// feedback: feedbackSchema,
 });
 
 const userModel = model<IUser & Document>('User', userSchema);

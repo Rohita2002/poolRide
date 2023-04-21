@@ -328,6 +328,7 @@ class MyAccount extends Component {
 									shouldShowDelete={false}
 									shouldShowComplete={false}
 									history={true}
+									shouldShowFeedback={true}
 								/>
 							)}
 						</div>

@@ -56,6 +56,7 @@ class DynamicRides extends Component {
 							shouldShowDelete={this.props.shouldShowDelete}
 							shouldShowComplete={this.props.shouldShowComplete}
 							history={this.props.history}
+							shouldShowFeedback={this.props.shouldShowFeedback}
 							poolMembers={ride.poolMembers}
 						/>
 					);

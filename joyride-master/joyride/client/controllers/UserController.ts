@@ -4,6 +4,7 @@ import * as jwt from 'jsonwebtoken';
 
 import Controller from '../interfaces/IController';
 import userModel from '../schemas/User';
+import { use } from 'passport';
 
 /**
  * Controller class for the user.
@@ -31,7 +32,7 @@ export default class UserController implements Controller {
 		this.router.post(`${this.path}/signup`, this.createNewUser);
 		this.router.delete(`${this.path}/:id`, this.deleteUser);
 		this.router.put(`${this.path}`, this.modifyUser);
-		// this.router.put(`${this.path}/:id`, this.addFeedback);
+		this.router.post(`${this.path}/addFeedback`, this.addFeedback);
 	}
 
 	/**
@@ -110,32 +111,33 @@ export default class UserController implements Controller {
 		});
 	};
 
-	// private addFeedback = (
-	// 	request: express.Request,
-	// 	response: express.Response
-	// ) => {
-	// 	const id = request.params.id;
+	private addFeedback = (
+		request: express.Request,
+		response: express.Response
+	) => {
+		// Assuming you have the driverID, message, and rating stored in variables
+		const { userID, driverID, message, stars } = request.body;
 
-	// 	const driverID = request.body.driverID;
-	// 	const message = request.body.feedback;
-	// 	const rating = request.body.stars;
+		const newFeedback = {
+			fromID: userID,
+			message: message,
+			rating: stars,
+		};
 
-	// 	this.user
-	// 		.findByIdAndUpdate(
-	// 			id,
-	// 			{
-	// 				feedback: {
-	// 					ToDriver: driverID,
-	// 					message: message,
-	// 					rating: rating,
-	// 				},
-	// 			},
-	// 			{ new: true }
-	// 		)
-	// 		.then((user) => {
-	// 			response.send(user);
-	// 		});
-	// };
+		this.user
+			.findByIdAndUpdate(
+				driverID,
+				{ $push: { feedback: newFeedback } },
+				{ new: true }
+			)
+			.then(() => {
+				response.sendStatus(200);
+			})
+			.catch((err) => {
+				console.error('Error updating user:', err);
+				response.status(500).json({ error: 'Error updating user' });
+			});
+	};
 
 	/**
 	 * Get all users.
