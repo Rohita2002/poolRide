@@ -17,6 +17,7 @@ class DynamicRides extends Component {
 	 */
 	RidesByDate() {
 		let rideGroups = [];
+		let rideGroupsHist = [];
 		if (this.props.rides.length > 0) {
 			for (let ride of this.props.rides) {
 				if (!ride.completed) {
@@ -38,9 +39,29 @@ class DynamicRides extends Component {
 							poolMembers={ride.poolMembers}
 						/>
 					);
+				} else {
+					rideGroupsHist.push(
+						<RideEntry
+							key={ride.key}
+							rideID={ride._id}
+							driverID={ride.driverID}
+							departure={ride.departure}
+							destination={ride.destination}
+							date={ride.date}
+							completed={ride.completed}
+							numberOfSeats={ride.numberOfSeats - ride.poolMembers?.length}
+							price={ride.price}
+							shouldShowEdit={this.props.shouldShowEdit}
+							shouldShowJoin={this.props.shouldShowJoin}
+							shouldShowDelete={this.props.shouldShowDelete}
+							shouldShowComplete={this.props.shouldShowComplete}
+							history={this.props.history}
+							poolMembers={ride.poolMembers}
+						/>
+					);
 				}
 			}
-			return rideGroups;
+			return this.props.history ? rideGroupsHist : rideGroups;
 		} else {
 			return <div id="NoRides">No rides yet!</div>;
 		}

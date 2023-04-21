@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 import { IUser } from '../interfaces/IUser';
 
 // @TODO determine which fields I want to keep in generic user.
@@ -8,14 +8,20 @@ import { IUser } from '../interfaces/IUser';
  * email must be @illinois.edu
  */
 const userSchema = new Schema({
-    firstname: String,
-    lastname: String,
-    username: String,
-    emailID: String,
-    mobileNumber: String,
-    password: String
-    // license: String,
-    // aboutme: String
+	firstname: String,
+	lastname: String,
+	username: String,
+	emailID: String,
+	mobileNumber: String,
+	password: String,
+	// feedback: {
+	// 	ToDriver: String,
+	// 	message: String,
+	// 	rating: String,
+	// },
+
+	// license: String,
+	// aboutme: String
 });
 
 const userModel = model<IUser & Document>('User', userSchema);

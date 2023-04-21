@@ -31,6 +31,7 @@ export default class UserController implements Controller {
 		this.router.post(`${this.path}/signup`, this.createNewUser);
 		this.router.delete(`${this.path}/:id`, this.deleteUser);
 		this.router.put(`${this.path}`, this.modifyUser);
+		// this.router.put(`${this.path}/:id`, this.addFeedback);
 	}
 
 	/**
@@ -108,6 +109,33 @@ export default class UserController implements Controller {
 			response.send(ride);
 		});
 	};
+
+	// private addFeedback = (
+	// 	request: express.Request,
+	// 	response: express.Response
+	// ) => {
+	// 	const id = request.params.id;
+
+	// 	const driverID = request.body.driverID;
+	// 	const message = request.body.feedback;
+	// 	const rating = request.body.stars;
+
+	// 	this.user
+	// 		.findByIdAndUpdate(
+	// 			id,
+	// 			{
+	// 				feedback: {
+	// 					ToDriver: driverID,
+	// 					message: message,
+	// 					rating: rating,
+	// 				},
+	// 			},
+	// 			{ new: true }
+	// 		)
+	// 		.then((user) => {
+	// 			response.send(user);
+	// 		});
+	// };
 
 	/**
 	 * Get all users.

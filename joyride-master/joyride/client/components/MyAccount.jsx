@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-// import LocationConstants from './LocationConstants.ts';
 import DynamicRides from './DynamicRides';
+// import '../css/toggle.css';
 
 import request from 'request';
 
@@ -15,9 +15,35 @@ class MyAccount extends Component {
 			loggedin: true,
 			user: null,
 			rides: [],
+			ridesHist: [],
+			ridesR: [],
+			ridesRHist: [],
+			isToggled: false,
+			viewHistoryDrives: false,
+			viewHistoryRides: false,
 		};
 
+		this.handleToggle = this.handleToggle.bind(this);
+		this.handleClickDriveHistory = this.handleClickDriveHistory.bind(this);
+		this.handleClickRideHistory = this.handleClickRideHistory.bind(this);
 		this.signedInUser();
+	}
+
+	handleClickDriveHistory() {
+		console.log('clicked drive history');
+		this.setState((prevState) => ({
+			viewHistoryDrives: !prevState.viewHistoryDrives,
+		}));
+	}
+	handleClickRideHistory() {
+		console.log('clicked ride history');
+		this.setState((prevState) => ({
+			viewHistoryRides: !prevState.viewHistoryRides,
+		}));
+	}
+
+	handleToggle() {
+		this.setState((prevState) => ({ isToggled: !prevState.isToggled }));
 	}
 
 	/**
@@ -49,6 +75,7 @@ class MyAccount extends Component {
 						},
 						() => {
 							self.getRidesByUserID();
+							self.getRidesAsRider();
 						}
 					);
 				}
@@ -70,6 +97,7 @@ class MyAccount extends Component {
 		console.log(uri);
 
 		const displayRides = [];
+		const displayRidesHist = [];
 		const self = this;
 
 		request.get(uri, function (error, response, body) {
@@ -99,60 +127,67 @@ class MyAccount extends Component {
 					category: ride.category,
 					price: ride.price,
 				});
+
+				if (ride.completed) {
+					displayRidesHist.push({
+						key: ride._id,
+						_id: ride._id,
+						driverID: ride.driverID,
+						departure: ride.departure,
+						destination: ride.destination,
+						date: ride.date,
+						completed: ride.completed,
+						numberOfSeats: ride.numberOfSeats + ride.poolMembers.length,
+						poolMembers: ride.poolMembers,
+						category: ride.category,
+						price: ride.price,
+					});
+				}
 			}
 			console.log('displayRides', displayRides);
-			self.setState((state) => ({
+			self.setState({
 				rides: displayRides,
-			}));
+				ridesHist: displayRidesHist,
+			});
 		});
 	}
 
-	/**
-	 * Update state when values are changed.
-	 * @param {} event
-	 */
-	// handleChange(event) {
-	// 	const target = event.target;
-	// 	const value = target.value;
-	// 	const name = target.name;
+	getRidesAsRider() {
+		const uri = `http://localhost:${process.env.PORT}/ride/rides`;
 
-	// 	this.setState({
-	// 		[name]: value,
-	// 	});
-	// }
+		// Get user id and send it in with the post request.
 
-	/**
-	 * Handle the form submit by creating a post request.
-	 */
-	// handleSubmit(event) {
-	// 	event.preventDefault();
-	// 	if (!this.state.firstname || !this.state.lastname) {
-	// 		this.setState({
-	// 			errorMessage: 'Need to fill in a name!',
-	// 		});
-	// 	} else {
-	// 		// Make the post request
-	// 		const uri = `http://localhost:${process.env.PORT}/user`;
+		self = this;
 
-	// 		// Get user id and send it in with the post request.
-
-	// 		const formdata = JSON.stringify(this.state);
-
-	// 		fetch(uri, {
-	// 			method: 'POST',
-	// 			body: formdata,
-	// 			headers: {
-	// 				'Content-Type': 'application/json',
-	// 			},
-	// 		})
-	// 			.then(function (response) {
-	// 				return response.json();
-	// 			})
-	// 			.catch(function (err) {
-	// 				console.log('Request failed', err);
-	// 			});
-	// 	}
-	// }
+		fetch(uri, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				const arr = [];
+				const arrHist = [];
+				data.forEach((ride) => {
+					ride.poolMembers?.forEach((element) => {
+						console.log('element', element);
+						if (this.state.user._id === element.memberID) {
+							arr.push(ride);
+							if (ride.completed) arrHist.push(ride);
+						}
+					});
+				});
+				self.setState({
+					ridesR: arr,
+					ridesRHist: arrHist,
+				});
+				console.log('data', data);
+				console.log('ridesRHist', this.state.ridesRHist);
+			});
+	}
 
 	/**
 	 * The user's account page.
@@ -165,19 +200,138 @@ class MyAccount extends Component {
 			return <Redirect to="/login" />;
 		}
 
+		const isToggled = this.state.isToggled;
+
+		const switchStyle = {
+			position: 'relative',
+			display: 'inline-block',
+			width: '60px',
+			height: '34px',
+		};
+
+		const sliderStyle = {
+			position: 'absolute',
+			cursor: 'pointer',
+			top: '0',
+			left: '0',
+			right: '0',
+			bottom: '0',
+			backgroundColor: '#ccc',
+			transition: '0.4s',
+		};
+
+		const sliderBeforeStyle = {
+			position: 'absolute',
+			content: '""',
+			height: '26px',
+			width: '26px',
+			left: '4px',
+			bottom: '4px',
+			backgroundColor: 'white',
+			transition: '0.4s',
+		};
+
+		const sliderCheckedStyle = {
+			backgroundColor: '#2196F3',
+		};
+
+		const sliderCheckedBeforeStyle = {
+			transform: 'translateX(26px)',
+		};
+
 		if (this.state.user !== null) {
-			console.log('My pools', this.state.rides);
+			console.log('My pools', this.state.ridesRHist);
 			return (
-				<div className="UserAccountContainer">
-					<h1>Hi, {this.state.user.firstname} </h1>
-					<p id="userRides">I'm driving!</p>
-					<DynamicRides
-						rides={this.state.rides}
-						shouldShowEdit={false}
-						shouldShowJoin={false}
-						shouldShowDelete={true}
-						shouldShowComplete={true}
-					/>
+				<div>
+					<label style={switchStyle} className="switch">
+						<input
+							type="checkbox"
+							checked={isToggled}
+							onChange={this.handleToggle}
+						/>
+						<span
+							style={Object.assign(
+								{},
+								sliderStyle,
+								isToggled ? sliderCheckedStyle : null
+							)}
+						>
+							<span
+								style={Object.assign(
+									{},
+									sliderBeforeStyle,
+									isToggled ? sliderCheckedBeforeStyle : null
+								)}
+							></span>
+						</span>
+					</label>
+					{!isToggled ? (
+						<div className="UserAccountContainer">
+							<h1>Hi, {this.state.user.firstname} </h1>
+							{!this.state.viewHistoryDrives && (
+								<p id="userRides">I'm driving!</p>
+							)}
+							{this.state.viewHistoryDrives && (
+								<p id="userRides">My Drive History!</p>
+							)}
+							<button onClick={this.handleClickDriveHistory}>
+								View Drive History
+							</button>
+							{!this.state.viewHistoryDrives && (
+								<DynamicRides
+									rides={this.state.rides}
+									shouldShowEdit={false}
+									shouldShowJoin={false}
+									shouldShowDelete={true}
+									shouldShowComplete={true}
+									history={false}
+								/>
+							)}
+							{this.state.viewHistoryDrives && (
+								<DynamicRides
+									rides={this.state.ridesHist}
+									shouldShowEdit={false}
+									shouldShowJoin={false}
+									shouldShowDelete={false}
+									shouldShowComplete={false}
+									history={true}
+								/>
+							)}
+						</div>
+					) : (
+						<div className="UserAccountContainer">
+							<h1>Hi, {this.state.user.firstname} </h1>
+							{!this.state.viewHistoryRides && (
+								<p id="userRides">I'm riding!</p>
+							)}
+							{this.state.viewHistoryRides && (
+								<p id="userRides">My Ride History!</p>
+							)}
+							<button onClick={this.handleClickRideHistory}>
+								View Ride History
+							</button>
+							{!this.state.viewHistoryRides && (
+								<DynamicRides
+									rides={this.state.ridesR}
+									shouldShowEdit={false}
+									shouldShowJoin={false}
+									shouldShowDelete={false}
+									shouldShowComplete={false}
+									history={false}
+								/>
+							)}
+							{this.state.viewHistoryRides && (
+								<DynamicRides
+									rides={this.state.ridesRHist}
+									shouldShowEdit={false}
+									shouldShowJoin={false}
+									shouldShowDelete={false}
+									shouldShowComplete={false}
+									history={true}
+								/>
+							)}
+						</div>
+					)}
 				</div>
 			);
 		} else {

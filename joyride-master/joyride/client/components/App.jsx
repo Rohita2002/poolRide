@@ -20,6 +20,7 @@ import Admin from './Admin.jsx';
 import ViewPools from './ViewPools.jsx';
 import ViewUsers from './ViewUsers.jsx';
 import Landing from './Landing.jsx';
+// import Feedback from './Feedback.jsx';
 
 import '../css/App.css';
 
@@ -225,6 +226,7 @@ class App extends Component {
 					<Route path="/editride" component={EditRide} />
 					<Route path="/viewpools" component={ViewPools} />
 					<Route path="/viewusers" component={ViewUsers} />
+					{/* <Route path="/feedback" component={Feedback} /> */}
 				</div>
 				<link
 					href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"

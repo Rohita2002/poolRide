@@ -170,6 +170,8 @@ class NewRide extends Component {
 		const value = target.value;
 		const name = target.name;
 
+		if (name === 'vehicleType') console.log('vehicle type', value);
+
 		this.setState({
 			[name]: value,
 		});

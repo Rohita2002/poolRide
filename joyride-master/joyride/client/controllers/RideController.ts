@@ -94,6 +94,8 @@ export default class RideController implements Controller {
 				console.log('err in geteveryride', err);
 			});
 	};
+
+	
 	private addVehicle = (
 		request: express.Request,
 		response: express.Response
