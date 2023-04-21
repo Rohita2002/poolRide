@@ -159,7 +159,11 @@ class RideEntry extends Component {
 		}).then((response) => {
 			if (response.status === 200) {
 				console.log('completed ');
-				window.location.reload();
+				localStorage.setItem(
+					'poolDetails',
+					JSON.stringify(this.state.poolDetails)
+				);
+				window.location.replace('/payment');
 			} else {
 				console.log('not completed');
 			}

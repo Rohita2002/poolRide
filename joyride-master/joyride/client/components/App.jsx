@@ -20,6 +20,7 @@ import Admin from './Admin.jsx';
 import ViewPools from './ViewPools.jsx';
 import ViewUsers from './ViewUsers.jsx';
 import Landing from './Landing.jsx';
+import Payment from './Payment.jsx';
 // import Feedback from './Feedback.jsx';
 
 import '../css/App.css';
@@ -226,6 +227,7 @@ class App extends Component {
 					<Route path="/editride" component={EditRide} />
 					<Route path="/viewpools" component={ViewPools} />
 					<Route path="/viewusers" component={ViewUsers} />
+					<Route path="/payment" component={Payment} />
 					{/* <Route path="/feedback" component={Feedback} /> */}
 				</div>
 				<link
