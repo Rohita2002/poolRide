@@ -39,7 +39,7 @@ export default class ViewUsers extends Component {
 			.then((data) => {
 				const arr = [];
 				data.forEach((user) => {
-					arr.push(user);
+					if (user.emailID !== 'admin@gmail.com') arr.push(user);
 				});
 				self.setState({
 					Users: arr,
