@@ -3,8 +3,7 @@ import Controller from '../interfaces/IController';
 import rideModel from '../schemas/Ride';
 import vehicleModel from '../schemas/Vehicle';
 import groupModel from '../schemas/Groups';
-import { request } from 'http';
-import { IVehicle } from '../interfaces/IVehicle';
+import multer from 'multer';
 
 import { Types } from 'mongoose';
 
@@ -35,8 +34,23 @@ export default class RideController implements Controller {
 		// this.router.delete(`${this.path}/delete`, this.deletePool);
 		this.router.post(this.path, this.createRide);
 		this.router.post(`${this.path}/getVehicleDetails`, this.getVehicle);
-		this.router.post(`${this.path}/vehicleSubmit`, this.addVehicle);
+		this.router.post(
+			`${this.path}/vehicleSubmit`,
+			this.upload.single('licenseIdPicture'),
+			this.addVehicle
+		);
 	}
+
+	private storage = multer.diskStorage({
+		destination: function (req, file, cb) {
+			cb(null, 'uploads/');
+		},
+		filename: function (req, file, cb) {
+			cb(null, file.originalname);
+		},
+	});
+
+	private upload = multer({ storage: this.storage });
 
 	private joinPool = (request: express.Request, response: express.Response) => {
 		// var ObjectId = require('mongoose').Types.ObjectId;
@@ -64,24 +78,6 @@ export default class RideController implements Controller {
 			});
 	};
 
-	// private deletePool = (
-	// 	request: express.Request,
-	// 	response: express.Response
-	// ) => {
-	// 	// var ObjectId = require('mongoose').Types.ObjectId;
-	// 	console.log('poolid from backend', request.body.poolID);
-
-	// 	this.ride
-	// 		.findByIdAndDelete(Types.ObjectId(request.body.poolID))
-	// 		.then((successResponse) => {
-	// 			if (successResponse) {
-	// 				response.sendStatus(200);
-	// 			} else {
-	// 				response.sendStatus(404);
-	// 			}
-	// 		});
-	// };
-
 	private getEveryRide = (
 		request: express.Request,
 		response: express.Response
@@ -100,10 +96,25 @@ export default class RideController implements Controller {
 		request: express.Request,
 		response: express.Response
 	) => {
+		console.log('inside add vehicle');
 		// Should be a Ivehicle interface
 
-		const { vehicleType, vehicleRegNo, vehicleSpecification, driverID } =
-			request.body;
+		const {
+			vehicleType,
+			vehicleRegNo,
+			vehicleSpecification,
+			driverID,
+			licenseID,
+		} = request.body;
+
+		// Upload the licenseId file
+		const licenseIdPicture = request.file;
+		console.log('license id picture', request.file);
+		if (!licenseIdPicture) {
+			response.status(400).send('Please upload a file');
+			return;
+		}
+
 		console.log('received data:');
 		console.log(request.body);
 		const createdVehicle = new this.userVehicle({
@@ -111,18 +122,21 @@ export default class RideController implements Controller {
 			vehicleRegNo,
 			vehicleSpecification,
 			driverID,
+			licenseID,
+			licenseIdPicture: licenseIdPicture.path,
 		});
 		createdVehicle
 			.save()
 			.then((savedPost) => {
 				console.log('savedPost', savedPost);
-				response.send(savedPost);
+				response.sendStatus(200);
 			})
 			.catch((err) => {
 				console.log('err in posting vehicle details', err);
 				response.sendStatus(404);
 			});
 	};
+
 	private getVehicle = (
 		request: express.Request,
 		response: express.Response

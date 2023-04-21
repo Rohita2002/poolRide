@@ -32,7 +32,8 @@ class NewRide extends Component {
 			vehicleType: '',
 			vehicleRegNo: '',
 			vehicleSpecification: '',
-			licenseId: '',
+			licenseID: '',
+			licenseIdPicture: '',
 
 			rides: new Map(),
 		};
@@ -46,6 +47,7 @@ class NewRide extends Component {
 		this.handleNewCategoryChange = this.handleNewCategoryChange.bind(this);
 		this.handleDateChange = this.handleDateChange.bind(this);
 		this.handleNumberChange = this.handleNumberChange.bind(this);
+		this.handleFileChange = this.handleFileChange.bind(this);
 		// this.DynamicDropDownMenu = this.DynamicDropDownMenu.bind(this);
 		this.Errors = this.Errors.bind(this);
 
@@ -54,6 +56,11 @@ class NewRide extends Component {
 
 		// Check for active token. If not, then prompt user to sign in or register.
 	}
+
+	handleFileChange(event) {
+		console.log('event', event.target);
+		this.setState({ licenseIdPicture: event.target.files[0] });
+	};
 
 	/**
 	 * See if user is signed in. If so, open the new ride form. If not, prompt them to sign in.
@@ -291,80 +298,32 @@ class NewRide extends Component {
 	}
 
 	handleVehicleSubmit(event) {
-		event.preventDefault();
-
-		// Make the post request
-		const uri = `http://localhost:${process.env.PORT}/ride/vehicleSubmit`;
-
-		// Get user id and send it in with the post request.
-		// console.log('this.state', this.state)
-		const formdata = JSON.stringify(this.state);
-		self = this;
-		// console.log('formdata', formdata)
-		fetch(uri, {
-			method: 'POST',
-			body: formdata,
-
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-			.then(function (response) {
+		
+			event.preventDefault();
+			const uri = `http://localhost:${process.env.PORT}/ride/vehicleSubmit`;
+			const formData = new FormData();
+			formData.append('vehicleType', this.state.vehicleType);
+			formData.append('vehicleRegNo', this.state.vehicleRegNo);
+			formData.append('vehicleSpecification', this.state.vehicleSpecification);
+			formData.append('driverID', this.state.driverID);
+			formData.append('licenseIdPicture', this.state.licenseIdPicture);
+		
+			fetch(uri, {
+				method: 'POST',
+				body: formData,
+			})
+			.then(function(response) {
 				if (response.status === 200) {
+					console.log('vehicle added');
 					window.location.reload();
 				}
 			})
-			.catch(function (err) {
+			.catch(function(err) {
 				console.log('Request failed', err);
 			});
+		
+		
 	}
-
-	/**
-	 * Create a dropdown menu populated with specific locations.
-	 * @param {*} props : specify which direction the dropdown menu would accomodate
-	 */
-	// DynamicDropDownMenu(props) {
-	// 	let locationArray = [];
-	// 	var locations;
-
-	// 	var val;
-
-	// 	// Departure dropdown menu.
-	// 	if (props.stop == 'departure') {
-	// 		locations =
-	// 			this.state.category == 'ChicagoToChampaign'
-	// 				? LocationConstants.ChicagoPlaces
-	// 				: LocationConstants.ChampaignPlaces;
-	// 		val = this.state.departure;
-	// 	} else {
-	// 		// Destination dropdown menu.
-	// 		locations =
-	// 			this.state.category == 'ChicagoToChampaign'
-	// 				? LocationConstants.ChampaignPlaces
-	// 				: LocationConstants.ChicagoPlaces;
-	// 		val = this.state.destination;
-	// 	}
-
-	// 	// Pair all menu items with their values.
-	// 	Object.keys(locations).forEach((key) => {
-	// 		locationArray.push(
-	// 			<option key={key} value={key}>
-	// 				{locations[key].place}
-	// 			</option>
-	// 		);
-	// 	});
-
-	// 	return (
-	// 		<select
-	// 			className="NewRideFormInput"
-	// 			name={props.stop}
-	// 			value={val}
-	// 			onChange={this.handleChange}
-	// 		>
-	// 			{locationArray}
-	// 		</select>
-	// 	);
-	// }
 
 	/**
 	 * Display errors if there are any.
@@ -588,9 +547,20 @@ class NewRide extends Component {
 										<input
 											className="NewRideFormInput"
 											type="text"
-											name="licenseId"
-											value={this.state.licenseId}
+											name="licenseID"
+											value={this.state.licenseID}
 											onChange={this.handleChange}
+										/>
+									</td>
+								</tr>
+								<tr>
+									<td colSpan="2">
+										<label>Upload License ID Picture</label>
+										<input
+											className="NewVehicleFormInput"
+											type="file"
+											name="licenseIdPicture"
+											onChange={this.handleFileChange}
 										/>
 									</td>
 								</tr>
