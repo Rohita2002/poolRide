@@ -12,7 +12,9 @@ export default class ViewUsers extends Component {
 		};
 
 		this.getAllUsers = this.getAllUsers.bind(this);
-		this.handleDelete = this.handleDelete.bind(this);
+		// this.handleDelete = this.handleDelete.bind(this);
+		this.deleteUserAndVehicleAndPools =
+			this.deleteUserAndVehicleAndPools.bind(this);
 
 		this.getAllUsers();
 	}
@@ -47,26 +49,78 @@ export default class ViewUsers extends Component {
 			});
 	}
 
-	handleDelete(id) {
-		console.log('user to be deleted:', id);
+	// handleDelete(id) {
+	// 	console.log('user to be deleted:', id);
 
-		const uri = `http://localhost:${process.env.PORT}/user/${id}`;
+	// 	const uri = `http://localhost:${process.env.PORT}/user/${id}`;
 
-		self = this;
+	// 	self = this;
 
-		fetch(uri, {
+	// 	fetch(uri, {
+	// 		method: 'DELETE',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 		},
+	// 	})
+	// 		.then((response) => {
+	// 			if (response.status === 200) {
+	// 				console.log('user deleted');
+	// 				// window.location.reload();
+	// 			}
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log('Request failed', err);
+	// 		});
+	// }
+
+	deleteUserAndVehicleAndPools(userId) {
+		// Delete the user
+		fetch(`http://localhost:${process.env.PORT}/user/${userId}`, {
 			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			// headers: {
+			// 	'Content-Type': 'application/json',
+			// },
 		})
 			.then((response) => {
-				if (response.status === 200) {
-					window.location.reload();
+				if (response.status !== 200) {
+					console.log('Failed to delete user');
 				}
+				console.log('User deleted successfully');
+
+				// Delete the vehicle belonging to the user
+				return fetch(`http://localhost:${process.env.PORT}/vehicle/${userId}`, {
+					method: 'DELETE',
+					// headers: {
+					// 	'Content-Type': 'application/json',
+					// },
+				});
 			})
-			.catch((err) => {
-				console.log('Request failed', err);
+			.then((response) => {
+				if (response.status !== 200) {
+					console.log('Failed to delete vehicle');
+				}
+				console.log('Vehicle deleted successfully');
+
+				// Delete any pools associated with the user
+				return fetch(
+					`http://localhost:${process.env.PORT}/ride/deletePool/${userId}`,
+					{
+						method: 'DELETE',
+						// headers: {
+						// 	'Content-Type': 'application/json',
+						// },
+					}
+				);
+			})
+			.then((response) => {
+				if (response.status !== 200) {
+					console.log('Failed to delete pools');
+				}
+				console.log('Pools deleted successfully');
+				window.location.reload();
+			})
+			.catch((error) => {
+				console.log('Error deleting user, vehicle, and pools:', error);
 			});
 	}
 
@@ -91,7 +145,9 @@ export default class ViewUsers extends Component {
 								<td>{user.firstname}</td>
 								<td>{user.emailID}</td>
 								<td>
-									<button onClick={() => this.handleDelete(user._id)}>
+									<button
+										onClick={() => this.deleteUserAndVehicleAndPools(user._id)}
+									>
 										Delete
 									</button>
 								</td>

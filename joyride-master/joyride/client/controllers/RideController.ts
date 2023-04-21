@@ -31,6 +31,7 @@ export default class RideController implements Controller {
 		this.router.get(`${this.path}/:id`, this.getRideById);
 		this.router.put(`${this.path}/:id`, this.modifyRide);
 		this.router.delete(`${this.path}/:id`, this.deleteRide);
+		this.router.delete(`${this.path}/deletePool/:id`, this.deleteRides);
 		// this.router.delete(`${this.path}/delete`, this.deletePool);
 		this.router.post(this.path, this.createRide);
 		this.router.post(`${this.path}/getVehicleDetails`, this.getVehicle);
@@ -95,7 +96,6 @@ export default class RideController implements Controller {
 			});
 	};
 
-	
 	private addVehicle = (
 		request: express.Request,
 		response: express.Response
@@ -280,6 +280,21 @@ export default class RideController implements Controller {
 	) => {
 		const id = request.params.id;
 		this.ride.findByIdAndDelete(Types.ObjectId(id)).then((successResponse) => {
+			if (successResponse) {
+				response.sendStatus(200);
+			} else {
+				response.sendStatus(404);
+			}
+		});
+	};
+
+	private deleteRides = (
+		request: express.Request,
+		response: express.Response
+	) => {
+		const driverID = request.params.id;
+
+		this.ride.deleteMany({ driverID: driverID }).then((successResponse) => {
 			if (successResponse) {
 				response.sendStatus(200);
 			} else {
