@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../css/App.css';
 import DynamicRides from './DynamicRides.jsx';
 
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 /**
@@ -13,15 +14,16 @@ class Listings extends Component {
 		super(props);
 
 		this.state = {
-			ChiToChamp: true,
-			searchDate: new Date(),
 			Rides: null,
 			category: '',
+			date: '',
 		};
 
-		this.handleClick = this.handleClick.bind(this);
-		this.handleCategoryChange = this.handleCategoryChange.bind(this);
+		this.handleChange = this.handleChange.bind(this);
 		this.getAllRides = this.getAllRides.bind(this);
+		this.filterRidesByCategoryAndDate =
+			this.filterRidesByCategoryAndDate.bind(this);
+		this.handleDateChange = this.handleDateChange.bind(this);
 
 		this.getAllRides();
 	}
@@ -65,31 +67,8 @@ class Listings extends Component {
 			});
 	}
 
-	async handleClick() {
-		console.log('clicked.....');
-		const uri = `http://localhost:${process.env.PORT}/user/checktoken`;
-
-		const self = this;
-
-		const func = () =>
-			fetch(uri, {
-				method: 'POST',
-			}).then(function (response) {
-				// Check if login worked. If not, then show not logged in.
-				if (response.status == 404 || response.status == 401) {
-					self.setState((state) => ({
-						loggedIn: false,
-					}));
-				}
-				const res = response.json();
-				console.log(res);
-				return res;
-			});
-		const auth = await func();
-		console.log('auth', auth);
-	}
-
-	handleCategoryChange(event) {
+	handleChange(event) {
+		console.log('handle change called');
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;
@@ -99,18 +78,49 @@ class Listings extends Component {
 		});
 	}
 
+	filterRidesByCategoryAndDate() {
+		console.log('inside filtering...');
+		const { Rides, category, date } = this.state;
+		if (!Rides || !category) {
+			return [];
+		}
+
+		let filteredRides = Rides.get(category);
+		console.log('filtered Rides', filteredRides);
+
+		if (date) {
+			const dateObj = new Date(date);
+			filteredRides = filteredRides.filter((ride) => {
+				const rideDate = new Date(ride.date);
+				return rideDate.toDateString() === dateObj.toDateString();
+			});
+		}
+
+		return filteredRides;
+	}
+
+	handleDateChange(date) {
+		this.setState({
+			date: date,
+		});
+		console.log('date of ride: ' + this.state.date);
+	}
+
 	render() {
-		// showShowEdit should be flipped to false after testing.
+		console.log('stating in listing', this.state.Rides);
 		const categories = this.state.Rides
 			? Array.from(this.state.Rides.keys())
 			: [];
+		const filteredRides = this.filterRidesByCategoryAndDate(); // get the filtered rides
+		console.log('filered rides in listing', filteredRides);
+
 		return (
 			<div className="Listing">
 				<select
 					className="NewRideFormInput"
 					name="category"
 					value={this.state.category}
-					onChange={this.handleCategoryChange}
+					onChange={this.handleChange}
 				>
 					{categories.map((category) => {
 						return (
@@ -120,10 +130,34 @@ class Listings extends Component {
 						);
 					})}
 				</select>
-				{this.state.Rides && this.state.category && (
+				{/* <input
+					className="NewRideFormInput"
+					type="date"
+					name="date"
+					value={this.state.date}
+					onChange={this.handleChange}
+					minDate={new Date()}
+				/> */}
+				{/* <DatePicker
+					className="customCalendar"
+					name="date"
+					selected={this.state.date}
+					onChange={this.handleDateChange}
+					minDate={new Date()}
+				/> */}
+				<input
+					className="NewRideFormInput"
+					type="date"
+					name="date"
+					value={this.state.date}
+					onChange={this.handleChange}
+					min={new Date().toISOString().split('T')[0]}
+				/>
+
+				{filteredRides.length > 0 && ( // only render if there are filtered rides
 					<div>
 						<DynamicRides
-							rides={this.state.Rides.get(this.state.category)}
+							rides={filteredRides}
 							shouldShowJoin={true}
 						></DynamicRides>
 					</div>

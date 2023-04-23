@@ -10,7 +10,7 @@ class RideEntry extends Component {
 		super(props);
 
 		this.state = {
-			user: '',
+			user: '', //driver
 			userNotFound: false,
 			shouldShowEdit: this.props.shouldShowEdit,
 			shouldShowDelete: this.props.shouldShowDelete,
@@ -20,8 +20,10 @@ class RideEntry extends Component {
 			editRide: false,
 			poolDetails: this.props,
 			poolID: '',
-			memberID: '',
+			memberID: '', //user rider
 			hasGivenFeedback: false,
+			// canJoin: false,
+			rides: [],
 		};
 
 		this.showDate = this.showDate.bind(this);
@@ -32,9 +34,13 @@ class RideEntry extends Component {
 		this.handleclickDelete = this.handleclickDelete.bind(this);
 		this.handleclickComplete = this.handleclickComplete.bind(this);
 		this.handleclickFeedback = this.handleclickFeedback.bind(this);
+		this.getRidesAsRider = this.getRidesAsRider.bind(this);
+
 		this.checkToken = this.checkToken.bind(this);
+
 		this.checkToken();
 		this.getUser(this.props.driverID);
+		this.getRidesAsRider();
 	}
 
 	checkToken = async () => {
@@ -67,31 +73,63 @@ class RideEntry extends Component {
 
 	async handleclick() {
 		console.log('clicked join.....');
+		console.log('rides in join click', this.state.rides);
 
-		console.log('ride to be joined:', this.state);
+		let canJoin = false;
 
-		const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+		const hasRideWithin10Minutes = this.state.rides.some((r) => {
+			if (r.date.slice(0, 10) === this.state.poolDetails.date.slice(0, 10)) {
+				console.log('matched with', r);
+				const rideTime = new Date(r.date).getTime();
+				console.log('ride time', rideTime);
+				const now = new Date(this.state.poolDetails.date).getTime();
+				console.log('now time', now);
+				const timeDiff = Math.abs(rideTime - now);
+				console.log('time diff', timeDiff);
+				const diffInMinutes = Math.round(timeDiff / (1000 * 60)); // Convert milliseconds to minutes
+				console.log('diff in mins', diffInMinutes);
+				console.log('return ', diffInMinutes >= 0 && diffInMinutes <= 10);
+				return diffInMinutes >= 0 && diffInMinutes <= 10;
+			} else {
+				return false;
+			}
+		});
 
-		self = this;
+		// If the user has a ride within 10 minutes, display an alert and prevent them from joining
+		if (!hasRideWithin10Minutes) {
+			canJoin = true;
+		}
 
-		const body = JSON.stringify(this.state);
+		if (!canJoin) {
+			alert(
+				'You have a ride within the next 10 minutes. You cannot join this ride.'
+			);
+		} else {
+			console.log('ride to be joined:', this.state);
 
-		fetch(uri, {
-			method: 'POST',
-			body,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-			.then((response) => {
-				if (response.status === 200) {
-					console.log('joined');
-					window.location.reload();
-				}
+			const uri = `http://localhost:${process.env.PORT}/ride/joinPool`;
+
+			self = this;
+
+			const body = JSON.stringify(this.state);
+
+			fetch(uri, {
+				method: 'POST',
+				body,
+				headers: {
+					'Content-Type': 'application/json',
+				},
 			})
-			.catch((err) => {
-				console.log('Request failed', err);
-			});
+				.then((response) => {
+					if (response.status === 200) {
+						console.log('joined');
+						// window.location.reload();
+					}
+				})
+				.catch((err) => {
+					console.log('Request failed', err);
+				});
+		}
 	}
 
 	async handleclickDelete() {
@@ -163,15 +201,25 @@ class RideEntry extends Component {
 	 * Prettify the date a little bit.
 	 */
 	showDate() {
+		// const date = new Date(this.props.date);
+
+		// const hours = date.getHours();
+
+		// const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+
+		// return (
+		// 	<td className="RideEntryField" id="datestamp">
+		// 		{hours}:{minutes}
+		// 	</td>
+		// );
 		const date = new Date(this.props.date);
 
-		const hours = date.getHours();
-
-		const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+		const dateString = date.toLocaleDateString();
+		const timeString = date.toLocaleTimeString();
 
 		return (
 			<td className="RideEntryField" id="datestamp">
-				{hours}:{minutes}
+				{dateString} {timeString}
 			</td>
 		);
 	}
@@ -256,6 +304,38 @@ class RideEntry extends Component {
 		});
 	}
 
+	getRidesAsRider() {
+		const uri = `http://localhost:${process.env.PORT}/ride/rides`;
+
+		// Get user id and send it in with the post request.
+
+		fetch(uri, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				const arr = [];
+				data.forEach((ride) => {
+					ride.poolMembers?.forEach((element) => {
+						if (this.state.memberID === element.memberID) {
+							arr.push(ride);
+						}
+					});
+				});
+
+				this.setState({
+					rides: arr,
+				});
+
+				console.log('my rides from rideentry', this.state.rides);
+			});
+	}
+
 	/**
 	 * Render a listing.
 	 */
@@ -275,8 +355,6 @@ class RideEntry extends Component {
 		} else {
 			let memberJoined = false;
 			this.props.poolMembers?.forEach((element) => {
-				console.log('element', element);
-				console.log('this.state?.memberID', this.state?.memberID);
 				if (this.state?.memberID === element.memberID) memberJoined = true;
 			});
 			if (this.props.driverID === this.state?.memberID) memberJoined = true;

@@ -206,7 +206,7 @@ class App extends Component {
 								<img id="logo" src={tractor} className="App-logo" alt="logo" />
 							</Link>
 						)}
-						<h2>Pool&Ride</h2>
+						<h2>PoolNRide</h2>
 						<DropdownMenu
 							width={this.state.screenWidth}
 							isUserSignedIn={this.state.isUserSignedIn}
