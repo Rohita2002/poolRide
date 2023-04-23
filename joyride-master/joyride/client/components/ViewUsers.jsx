@@ -9,14 +9,18 @@ export default class ViewUsers extends Component {
 
 		this.state = {
 			Users: [],
+			vehicles: [],
 		};
 
 		this.getAllUsers = this.getAllUsers.bind(this);
-		// this.handleDelete = this.handleDelete.bind(this);
 		this.deleteUserAndVehicleAndPools =
 			this.deleteUserAndVehicleAndPools.bind(this);
+		this.calculateAverageRating = this.calculateAverageRating.bind(this);
+		this.displayStars = this.displayStars.bind(this);
+		this.getAllVehicles = this.getAllVehicles.bind(this);
 
 		this.getAllUsers();
+		this.getAllVehicles();
 	}
 
 	getAllUsers() {
@@ -45,41 +49,44 @@ export default class ViewUsers extends Component {
 					Users: arr,
 				});
 				console.log('data', data);
-				console.log('users in getting', Users);
+				// console.log('users in getting', Users);
 			});
 	}
 
-	// handleDelete(id) {
-	// 	console.log('user to be deleted:', id);
+	getAllVehicles() {
+		const uri = `http://localhost:${process.env.PORT}/vehicle/allvehicles`;
 
-	// 	const uri = `http://localhost:${process.env.PORT}/user/${id}`;
+		// Get user id and send it in with the post request.
 
-	// 	self = this;
+		self = this;
+		// const arr = [];
 
-	// 	fetch(uri, {
-	// 		method: 'DELETE',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 	})
-	// 		.then((response) => {
-	// 			if (response.status === 200) {
-	// 				console.log('user deleted');
-	// 				// window.location.reload();
-	// 			}
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log('Request failed', err);
-	// 		});
-	// }
+		fetch(uri, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				const arr = [];
+				data.forEach((vehicle) => {
+					arr.push(vehicle);
+				});
+				self.setState({
+					vehicles: arr,
+				});
+				console.log('data', data);
+				// console.log('users in getting', Users);
+			});
+	}
 
 	deleteUserAndVehicleAndPools(userId) {
 		// Delete the user
 		fetch(`http://localhost:${process.env.PORT}/user/${userId}`, {
 			method: 'DELETE',
-			// headers: {
-			// 	'Content-Type': 'application/json',
-			// },
 		})
 			.then((response) => {
 				if (response.status !== 200) {
@@ -90,9 +97,6 @@ export default class ViewUsers extends Component {
 				// Delete the vehicle belonging to the user
 				return fetch(`http://localhost:${process.env.PORT}/vehicle/${userId}`, {
 					method: 'DELETE',
-					// headers: {
-					// 	'Content-Type': 'application/json',
-					// },
 				});
 			})
 			.then((response) => {
@@ -106,9 +110,6 @@ export default class ViewUsers extends Component {
 					`http://localhost:${process.env.PORT}/ride/deletePool/${userId}`,
 					{
 						method: 'DELETE',
-						// headers: {
-						// 	'Content-Type': 'application/json',
-						// },
 					}
 				);
 			})
@@ -124,6 +125,21 @@ export default class ViewUsers extends Component {
 			});
 	}
 
+	calculateAverageRating(feedback) {
+		const total = feedback.reduce((acc, curr) => acc + curr.rating, 0);
+		const avg = total / feedback.length;
+		return avg.toFixed(1);
+	}
+
+	displayStars(numStars) {
+		const fullStars = Math.floor(numStars);
+		const halfStar = numStars % 1 >= 0.5 ? '★' : '☆';
+		const emptyStars = 5 - fullStars - (halfStar === '★' ? 1 : 0);
+
+		const stars = '★'.repeat(fullStars) + halfStar + '☆'.repeat(emptyStars);
+		return stars;
+	}
+
 	render() {
 		console.log('users in main', this.state.Users);
 
@@ -132,9 +148,14 @@ export default class ViewUsers extends Component {
 				<table>
 					<thead>
 						<tr>
-							<th>Serial No.</th>
+							<th>#</th>
 							<th>First Name</th>
-							<th>Email</th>
+							<th>Username</th>
+							<th>Email ID</th>
+							<th>Mobile Number</th>
+							<th>Feedback</th>
+							<th>Average Rating</th>
+							<th>Driver License</th>
 							<th>Delete</th>
 						</tr>
 					</thead>
@@ -143,7 +164,41 @@ export default class ViewUsers extends Component {
 							<tr key={user._id}>
 								<td>{index + 1}</td>
 								<td>{user.firstname}</td>
+								<td>{user.username}</td>
 								<td>{user.emailID}</td>
+								<td>{user.mobileNumber}</td>
+								<td>
+									{/* <h4>Recent Feedbacks</h4> */}
+									{user.feedback.slice(0, 3).map((feedback, idx) => (
+										<div key={idx}>
+											<p>
+												{idx + 1}. Message: {feedback.message}
+											</p>
+											<p>Rating: {this.displayStars(feedback.rating)}</p>
+										</div>
+									))}
+								</td>
+								<td>
+									{/* <h4>Average Rating</h4> */}
+									{user.feedback.length > 0 ? (
+										<div>
+											<p>
+												{this.displayStars(
+													this.calculateAverageRating(user.feedback)
+												)}
+											</p>
+										</div>
+									) : (
+										<p>No ratings yet</p>
+									)}
+								</td>
+								{this.state.vehicles.some(
+									(vehicle) => vehicle.driverID === user._id
+								) ? (
+									<p>Has vehicle</p>
+								) : (
+									<p>No Vehicle</p>
+								)}
 								<td>
 									<button
 										onClick={() => this.deleteUserAndVehicleAndPools(user._id)}

@@ -23,12 +23,21 @@ export default class VehicleController implements Controller {
 	public initRoutes() {
 		this.router.post(`${this.path}/vehicleDetails`, this.getVehicle);
 		this.router.delete(`${this.path}/:id`, this.deleteVehicle);
+		this.router.get(`${this.path}/allvehicles`, this.getAllVehicles);
 	}
 
 	/**
-	 * New user sign up.
-	 * @TODO save encrypted passwords.
+	 * Get all users.
 	 */
+	private getAllVehicles = (
+		request: express.Request,
+		response: express.Response
+	) => {
+		console.log('get all vehicles');
+		this.userVehicle.find().then((vehicles) => {
+			response.send(vehicles);
+		});
+	};
 
 	private getVehicle = (
 		request: express.Request,

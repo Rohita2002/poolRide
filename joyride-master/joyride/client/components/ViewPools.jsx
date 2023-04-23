@@ -71,27 +71,6 @@ export default class ViewPools extends Component {
 			});
 	}
 
-	// displayRides() {
-	// 	// event.preventDefault();
-	// 	console.log('rides in display', this.state.Rides);
-	// 	// console.log('rides in display', typeof this.state.Rides);
-	// 	let rideGroups = [];
-	// 	this.state.Rides.forEach((ride) => {
-	// 		rideGroups.push(
-	// 			<tr key={ride._id}>
-	// 				<td>{index + 1}</td>
-	// 				<td>{ride.departure}</td>
-	// 				<td>{ride.destination}</td>
-	// 				<td>
-	// 					<button onClick={() => this.handleDelete(ride._id)}>Delete</button>
-	// 				</td>
-	// 			</tr>
-	// 		);
-	// 	});
-
-	// 	return rideGroups;
-	// }
-
 	render() {
 		return (
 			<div>

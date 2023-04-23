@@ -105,6 +105,7 @@ class NewRide extends Component {
 				console.log('data', data);
 			});
 	}
+	
 	haveVehicleDetails() {
 		console.log('hav veh det fun called');
 		const uri = `http://localhost:${process.env.PORT}/ride/getVehicleDetails`;
