@@ -111,6 +111,7 @@ class Feedback extends Component {
 					});
 
 					console.log('feedback added');
+					window.location.replace('/homeuser');
 				} else {
 					console.log('feedback not added', response);
 				}

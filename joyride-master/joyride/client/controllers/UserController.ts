@@ -5,6 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import Controller from '../interfaces/IController';
 import userModel from '../schemas/User';
 import { use } from 'passport';
+import { cookie } from 'request';
 
 /**
  * Controller class for the user.
@@ -170,14 +171,17 @@ export default class UserController implements Controller {
 				if (isCorrectPassword) {
 					// Create a token and attach it to the header.
 					console.log(founduser);
-					const tokenData = this.createToken(founduser.id);
-					console.log('set cookie');
-					response.setHeader('Set-Cookie', [this.createCookie(tokenData)]);
+					// const tokenData = this.createToken(founduser._id);
+					// console.log('set cookie');
+					// const cookie = this.createCookie(tokenData);
+					// response.setHeader('Set-Cookie', [cookie]);
+					// console.log('created cookie in backend', cookie);
 
-					return response.json({
+					return response.status(200).json({
 						success: true,
-						tokenData,
+						userID: founduser._id,
 					});
+					// response.send(tokenData);
 				} else {
 					return response.status(401).json({
 						success: false,
@@ -186,7 +190,10 @@ export default class UserController implements Controller {
 				}
 			} else {
 				console.log('user not found');
-				response.sendStatus(404);
+				return response.status(404).json({
+					success: false,
+					message: 'User not found',
+				});
 			}
 		});
 	};
@@ -197,11 +204,13 @@ export default class UserController implements Controller {
 	 */
 	private createToken(id) {
 		// SIGNING OPTIONS
-		const signOptions = {
-			expiresIn: '168h',
-		};
+		// const signOptions = {
+		// 	expiresIn: '168h',
+		// };
 
-		const token = jwt.sign({ id }, process.env.PRIVATE_KEY, signOptions);
+		const token = jwt.sign({ id }, process.env.PRIVATE_KEY, {
+			expiresIn: 24 * 60 * 60,
+		});
 
 		return token;
 	}
@@ -213,20 +222,23 @@ export default class UserController implements Controller {
 		request: express.Request,
 		response: express.Response
 	) => {
-		console.log('check token method');
+		console.log('check cookie method');
 		// Get token from cookies.
-		const cookies = request.cookies;
-		if (cookies && cookies.Authorization) {
-			const token = cookies.Authorization;
+		// const cookies = request.cookies;
+		// console.log('cookie in checkToken', request.body);
+		if (request.body) {
+			const token = request.body;
+
 			// Verify that the token is valid and active.
 			jwt.verify(token, process.env.PRIVATE_KEY, (err, decoded) => {
 				if (err) {
-					return response.json({
+					return response.status(404).json({
 						success: false,
 						message: 'Invalid token',
 					});
 				} else {
 					// If valid token, get the current user.
+					console.log('decoded id', decoded.id);
 					this.user.findById(decoded.id).then((founduser) => {
 						if (founduser) {
 							return response.status(200).json({
@@ -255,8 +267,12 @@ export default class UserController implements Controller {
 	 * Create cookie from token to be stored in the user's site.
 	 * @param token token returned from JWT sign
 	 */
+	// private createCookie(token) {
+	// 	return `Authorization=${token}; HttpOnly; Max-Età=${token.expiresIn}`;
+	// }
 	private createCookie(token) {
-		return `Authorization=${token}; HttpOnly; Max-Età=${token.expiresIn}`;
+		// const secure = process.env.NODE_ENV === 'production';
+		return `Authorization=${token}; HttpOnly; SameSite=Strict; Secure=false; Max-Age=${token.expiresIn}; path= /, domain=http://localhost`;
 	}
 
 	/**

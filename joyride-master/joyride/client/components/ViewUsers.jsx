@@ -131,12 +131,26 @@ export default class ViewUsers extends Component {
 		return avg.toFixed(1);
 	}
 
-	displayStars(numStars) {
+	displayStars(numStars, maxStars) {
 		const fullStars = Math.floor(numStars);
+		console.log('fullstars', fullStars);
 		const halfStar = numStars % 1 >= 0.5 ? '★' : '☆';
-		const emptyStars = 5 - fullStars - (halfStar === '★' ? 1 : 0);
+		console.log('mod', numStars % 1);
+		console.log('half stars', halfStar);
+		const emptyStars = maxStars - fullStars - (halfStar === '★' ? 1 : 0);
+		console.log('empty stars', emptyStars);
 
-		const stars = '★'.repeat(fullStars) + halfStar + '☆'.repeat(emptyStars);
+		const stars =
+			numStars % 1 >= 0.5
+				? '★'.repeat(fullStars) + halfStar + '☆'.repeat(emptyStars)
+				: '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
+		// if (halfStar === 1) {
+		// 	const stars = '★'.repeat(fullStars) + '☆'.repeat(emptyStars) + halfStar;
+		// } else {
+		// 	const stars = '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
+		// }
+
+		console.log('stars', stars);
 		return stars;
 	}
 
@@ -174,7 +188,7 @@ export default class ViewUsers extends Component {
 											<p>
 												{idx + 1}. Message: {feedback.message}
 											</p>
-											<p>Rating: {this.displayStars(feedback.rating)}</p>
+											<p>Rating: {this.displayStars(feedback.rating, 5)}</p>
 										</div>
 									))}
 								</td>
@@ -184,7 +198,8 @@ export default class ViewUsers extends Component {
 										<div>
 											<p>
 												{this.displayStars(
-													this.calculateAverageRating(user.feedback)
+													this.calculateAverageRating(user.feedback),
+													5
 												)}
 											</p>
 										</div>
