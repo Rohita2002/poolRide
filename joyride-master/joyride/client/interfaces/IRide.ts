@@ -12,6 +12,7 @@ export interface IRide {
 	poolMembers: [
 		{
 			memberID: String;
+			waypoint: String;
 		}
 	];
 	completed: Boolean;

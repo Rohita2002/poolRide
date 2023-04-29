@@ -21,6 +21,7 @@ const rideSchema = new Schema(
 		poolMembers: [
 			{
 				memberID: String,
+				waypoint: String,
 			},
 		],
 		completed: Boolean,

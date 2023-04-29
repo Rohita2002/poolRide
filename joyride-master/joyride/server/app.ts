@@ -20,17 +20,19 @@ class App {
 		this.app.set('view engine', 'ejs');
 		this.app.set('views', path.join(__dirname, '../client'));
 		this.app.use(express.static(path.join(__dirname, '../client')));
+		this.app.use(express.static(path.join(__dirname, '../uploads')));
 		// this.app.use(bodyParser.json());
 		this.app.use(express.json());
 		this.app.use(cookieParser());
 
-		let corsOptions = {
-			origin: '*',
-			methods: ['GET', 'PUT', 'POST', 'DELETE'],
-			allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
-		};
+		// let corsOptions = {
+		// 	origin: '*',
+		// 	methods: ['GET', 'PUT', 'POST', 'DELETE'],
+		// 	allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
+		// };
 
-		this.app.use(cors(corsOptions));
+		// this.app.use(cors(corsOptions));
+		this.app.use(cors());
 
 		// this.app.use(
 		// 	cors({
@@ -46,16 +48,16 @@ class App {
 		// 	next();
 		// });
 
-		this.app.use(function (req, res, next) {
-			res.header('Access-Control-Allow-Credentials', 'true');
-			// res.header('Access-Control-Allow-Origin', req.headers.origin);
-			res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-			res.header(
-				'Access-Control-Allow-Headers',
-				'Origin, X-Requested-With, Content-Type, Accept'
-			);
-			next();
-		});
+		// this.app.use(function (req, res, next) {
+		// 	res.header('Access-Control-Allow-Credentials', 'true');
+		// 	// res.header('Access-Control-Allow-Origin', req.headers.origin);
+		// 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+		// 	res.header(
+		// 		'Access-Control-Allow-Headers',
+		// 		'Origin, X-Requested-With, Content-Type, Accept'
+		// 	);
+		// 	next();
+		// });
 	}
 
 	public getServer() {

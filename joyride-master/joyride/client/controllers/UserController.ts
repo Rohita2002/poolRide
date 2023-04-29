@@ -7,6 +7,9 @@ import userModel from '../schemas/User';
 import { use } from 'passport';
 import { cookie } from 'request';
 
+import fs from 'fs';
+import path from 'path';
+
 /**
  * Controller class for the user.
  * @TODO write functions for updating, deleting, and getting user.
@@ -32,9 +35,65 @@ export default class UserController implements Controller {
 		this.router.post(`${this.path}/checktoken`, this.checkToken);
 		this.router.post(`${this.path}/signup`, this.createNewUser);
 		this.router.delete(`${this.path}/:id`, this.deleteUser);
+		this.router.put(`${this.path}/:id`, this.verifyUser);
+		this.router.put(`${this.path}/notVerify/:id`, this.notVerifyUser);
 		this.router.put(`${this.path}`, this.modifyUser);
 		this.router.post(`${this.path}/addFeedback`, this.addFeedback);
+		this.router.get(`${this.path}/image/:imageName`, (req, res) => {
+			const imagePath = path.join(
+				__dirname,
+				'../../uploads',
+				req.params.imageName
+			);
+			if (fs.existsSync(imagePath)) {
+				res.status(200).sendFile(imagePath);
+			} else {
+				res.status(404).send('Image not found');
+			}
+		});
 	}
+
+	private notVerifyUser = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		console.log('inside user verification');
+		try {
+			const user = await this.user.findByIdAndUpdate(
+				request.params.id,
+				{ verified: false },
+				{ new: true }
+			);
+			if (!user) {
+				return response.status(404).json({ message: 'User not found' });
+			}
+			response.json(user);
+		} catch (error) {
+			console.error(error.message);
+			response.status(500).json({ message: 'Server error' });
+		}
+	};
+
+	private verifyUser = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		console.log('inside user verification');
+		try {
+			const user = await this.user.findByIdAndUpdate(
+				request.params.id,
+				{ verified: true },
+				{ new: true }
+			);
+			if (!user) {
+				return response.status(404).json({ message: 'User not found' });
+			}
+			response.json(user);
+		} catch (error) {
+			console.error(error.message);
+			response.status(500).json({ message: 'Server error' });
+		}
+	};
 
 	/**
 	 * New user sign up.

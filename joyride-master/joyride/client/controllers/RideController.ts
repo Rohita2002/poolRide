@@ -4,6 +4,8 @@ import rideModel from '../schemas/Ride';
 import vehicleModel from '../schemas/Vehicle';
 import groupModel from '../schemas/Groups';
 import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
 
 import { Types } from 'mongoose';
 
@@ -54,7 +56,7 @@ export default class RideController implements Controller {
 
 	private joinPool = (request: express.Request, response: express.Response) => {
 		// var ObjectId = require('mongoose').Types.ObjectId;
-		const { memberID, poolID } = request.body;
+		const { memberID, poolID, waypoint } = request.body;
 
 		this.ride
 			.updateOne(
@@ -65,6 +67,7 @@ export default class RideController implements Controller {
 					$push: {
 						poolMembers: {
 							memberID: memberID,
+							waypoint: waypoint,
 						},
 					},
 				}
@@ -117,6 +120,15 @@ export default class RideController implements Controller {
 
 		console.log('received data:');
 		console.log(request.body);
+
+		// Rename the file to driverID
+		const oldPath = licenseIdPicture.path;
+		const newPath = oldPath.replace(
+			licenseIdPicture.filename,
+			driverID + path.extname(licenseIdPicture.originalname)
+		);
+		fs.renameSync(oldPath, newPath);
+
 		const createdVehicle = new this.userVehicle({
 			vehicleType,
 			vehicleRegNo,

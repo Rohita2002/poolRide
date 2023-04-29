@@ -8,6 +8,7 @@ export interface IUser {
 	emailID: String;
 	mobileNumber: String;
 	password: String;
+	verified: Boolean;
 	feedback: [
 		{
 			fromID: String;

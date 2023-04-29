@@ -21,7 +21,7 @@ export default class VehicleController implements Controller {
 	 * Initialize all routes
 	 */
 	public initRoutes() {
-		this.router.post(`${this.path}/vehicleDetails`, this.getVehicle);
+		this.router.get(`${this.path}/vehicleDetails/:id`, this.getVehicle);
 		this.router.delete(`${this.path}/:id`, this.deleteVehicle);
 		this.router.get(`${this.path}/allvehicles`, this.getAllVehicles);
 	}
@@ -44,21 +44,22 @@ export default class VehicleController implements Controller {
 		response: express.Response
 	) => {
 		console.log('called getVehicle');
-		console.log('request.body', request.body);
+		// console.log('request.body', request.body);
 		console.log('helooooo');
 
-		const userId = request.body.userId;
+		const userId = request.params.id;
 		console.log('userId', userId);
 		// const emailID = loginData.emailID;
 
-		this.userVehicle.findOne({ userId: userId }).then(async (founduser) => {
+		this.userVehicle.findOne({ driverID: userId }).then(async (founduser) => {
 			if (founduser) {
-				response.sendStatus(200);
+				// response.sendStatus(200);
 				response.send(founduser);
+				console.log('found vehicle', founduser);
 			} else {
-				console.log('user not found');
+				console.log('vehicle not found');
 				response.sendStatus(404);
-				response.send('not found');
+				// response.send('not found');
 			}
 		});
 
