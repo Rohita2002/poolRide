@@ -16,4 +16,5 @@ export interface IRide {
 		}
 	];
 	completed: Boolean;
+	completedTime: Date;
 }

@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-
+import { ObjectId } from 'mongodb';
 import Controller from '../interfaces/IController';
 import userModel from '../schemas/User';
 import { use } from 'passport';
@@ -51,7 +51,161 @@ export default class UserController implements Controller {
 				res.status(404).send('Image not found');
 			}
 		});
+		this.router.get(`${this.path}/admin/userstats`, this.getUserStats);
+		this.router.get(`${this.path}/admin/userstats7days`, this.getUserStatsSev);
+		this.router.get(`${this.path}/admin/feedbackstats`, this.getFeedbackStats);
 	}
+
+	private getUserStatsSev = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		const currentDate = new Date();
+		const dayCount = 7;
+		const stats = {};
+		let totalCount = 0;
+
+		for (let i = dayCount - 1; i >= 0; i--) {
+			const date = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth(),
+				currentDate.getDate() - i
+			);
+			const startDate = new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate()
+			);
+			const endDate = new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate() + 1
+			);
+
+			const users = await this.user.find({});
+
+			const usersInDay = users.filter((user) => {
+				const userCreatedAt = new ObjectId(user._id).getTimestamp();
+				return userCreatedAt >= startDate && userCreatedAt < endDate;
+			});
+
+			totalCount += usersInDay.length;
+		}
+
+		console.log('total count', totalCount);
+
+		const verifiedUserCount = await this.user.countDocuments({
+			verified: true,
+		});
+		console.log('Number of verified users:', verifiedUserCount);
+
+		const mostRecentUser = await this.user.findOne(
+			{},
+			{},
+			{ sort: { _id: -1 } }
+		);
+		const timeDiffInMs =
+			Date.now() - mostRecentUser._id.getTimestamp().getTime();
+
+		let timeDiff;
+		if (timeDiffInMs < 60 * 1000) {
+			// If the time difference is less than 60 seconds, show it in seconds
+			timeDiff = Math.floor(timeDiffInMs / 1000) + ' seconds';
+		} else if (timeDiffInMs < 60 * 60 * 1000) {
+			// If the time difference is less than 60 minutes, show it in minutes
+			timeDiff = Math.floor(timeDiffInMs / 1000 / 60) + ' minutes';
+		} else if (timeDiffInMs < 24 * 60 * 60 * 1000) {
+			// If the time difference is less than 24 hours, show it in hours
+			timeDiff = Math.floor(timeDiffInMs / 1000 / 60 / 60) + ' hours';
+		} else {
+			// Otherwise, show it in days
+			timeDiff = Math.floor(timeDiffInMs / 1000 / 60 / 60 / 24) + ' days';
+		}
+
+		console.log('time diff', mostRecentUser, timeDiff);
+
+		response.json({ totalCount, verifiedUserCount, timeDiff });
+		response.status(202);
+	};
+
+	private getFeedbackStats = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		const currentDate = new Date();
+		const dayCount = 7;
+		const stats = {};
+
+		for (let i = dayCount - 1; i >= 0; i--) {
+			const date = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth(),
+				currentDate.getDate() - i
+			);
+			const startDate = new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate()
+			);
+			const endDate = new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate() + 1
+			);
+
+			const users = await this.user.find({});
+
+			const feedbacks = users.reduce((total, user) => {
+				const userFeedbacks = user.feedback.filter((feedback) => {
+					const feedbackDate = new Date(
+						new ObjectId(feedback._id).getTimestamp()
+					);
+					return feedbackDate >= startDate && feedbackDate < endDate;
+				});
+				return total + userFeedbacks.length;
+			}, 0);
+
+			stats[date] = feedbacks;
+		}
+
+		response.status(202);
+		response.json(stats);
+	};
+
+	private getUserStats = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		const currentDate = new Date();
+		const monthCount = 7;
+		const stats = {};
+
+		for (let i = monthCount - 1; i >= 0; i--) {
+			const startOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i,
+				1
+			);
+			const endOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i + 1,
+				1
+			);
+
+			const users = await this.user.find({});
+
+			const usersInMonth = users.filter((user) => {
+				const userCreatedAt = new ObjectId(user._id).getTimestamp();
+				return userCreatedAt >= startOfMonth && userCreatedAt < endOfMonth;
+			});
+
+			stats[startOfMonth.toLocaleString('default', { month: 'long' })] =
+				usersInMonth.length;
+		}
+
+		response.json(stats);
+		response.status(202);
+	};
 
 	private notVerifyUser = async (
 		request: express.Request,

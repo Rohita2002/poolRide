@@ -25,6 +25,7 @@ const rideSchema = new Schema(
 			},
 		],
 		completed: Boolean,
+		completedTime: Date,
 	},
 	{
 		collection: 'Rides',

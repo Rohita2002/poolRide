@@ -6,6 +6,7 @@ import groupModel from '../schemas/Groups';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import { ObjectId } from 'mongodb';
 
 import { Types } from 'mongoose';
 
@@ -41,6 +42,10 @@ export default class RideController implements Controller {
 			this.upload.single('licenseIdPicture'),
 			this.addVehicle
 		);
+		this.router.get(`${this.path}/admin/cpoolstats`, this.getCPoolStats); //? completed pool stats
+		this.router.get(`${this.path}/admin/apoolstats`, this.getAPoolStats); //? active pool stats
+		this.router.get(`${this.path}/admin/cpoolstatsSev`, this.getCPoolStatsSev); //? active pool stats
+		this.router.get(`${this.path}/admin/popcategory`, this.getPopCategory); //? popylar category
 	}
 
 	private storage = multer.diskStorage({
@@ -53,6 +58,174 @@ export default class RideController implements Controller {
 	});
 
 	private upload = multer({ storage: this.storage });
+
+	private getPopCategory = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		// const popularCategories = await this.ride.aggregate([
+		// 	{ $group: { _id: '$category', count: { $sum: 1 } } },
+		// 	{ $sort: { count: -1 } },
+		// 	{ $limit: 4 },
+		// ]);
+
+		const topCategories = await this.ride.aggregate([
+			{
+				$group: {
+					_id: '$category',
+					rideCount: { $sum: 1 },
+					activeCount: {
+						$sum: {
+							$cond: { if: { $eq: ['$completed', false] }, then: 1, else: 0 },
+						},
+					},
+					completedCount: {
+						$sum: {
+							$cond: {
+								if: { $eq: ['$completed', true] },
+								then: 1,
+								else: 0,
+							},
+						},
+					},
+				},
+			},
+			{ $sort: { rideCount: -1 } },
+			{ $limit: 4 },
+		]);
+		// re.json(topCategories);
+
+		console.log('get pop cate', topCategories);
+		response.json({ topCategories });
+	};
+
+	private getCPoolStatsSev = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		const currentDate = new Date();
+		const startDate = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth(),
+			currentDate.getDate() - 7
+		);
+		let timeDiff;
+
+		const completedRidesCount = await this.ride.countDocuments({
+			completedTime: {
+				$gte: startDate,
+			},
+		});
+
+		const pool = await this.ride
+			.findOne({ completed: true })
+			.sort({ completedTime: -1 });
+
+		if (pool) {
+			const completedTime = new Date(pool.completedTime);
+			const currentTime = new Date();
+			const timeDiffInMs = currentTime.getTime() - completedTime.getTime();
+
+			// let timeDiffInHours = Math.round(timeDiffInMs / (1000 * 60 * 60));
+
+			if (timeDiffInMs < 60 * 1000) {
+				// If the time difference is less than 60 seconds, show it in seconds
+				timeDiff = Math.floor(timeDiffInMs / 1000) + ' seconds';
+			} else if (timeDiffInMs < 60 * 60 * 1000) {
+				// If the time difference is less than 60 minutes, show it in minutes
+				timeDiff = Math.floor(timeDiffInMs / 1000 / 60) + ' minutes';
+			} else if (timeDiffInMs < 24 * 60 * 60 * 1000) {
+				// If the time difference is less than 24 hours, show it in hours
+				timeDiff = Math.floor(timeDiffInMs / 1000 / 60 / 60) + ' hours';
+			} else {
+				// Otherwise, show it in days
+				timeDiff = Math.floor(timeDiffInMs / 1000 / 60 / 60 / 24) + ' days';
+			}
+
+			console.log('hehe', timeDiff);
+		} else {
+			console.log('No completed pools found');
+		}
+
+		console.log('Completed rides in the last 7 days:', completedRidesCount);
+		response.json({ completedRidesCount, timeDiff });
+	};
+
+	private getCPoolStats = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		// response.send("");
+		const currentDate = new Date();
+		const monthCount = 7;
+		const stats = {};
+
+		for (let i = monthCount - 1; i >= 0; i--) {
+			const startOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i,
+				1
+			);
+			const endOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i + 1,
+				1
+			);
+
+			const rides = await this.ride.find({});
+
+			const ridesInMonth = rides.filter((ride) => {
+				if (ride.completed) {
+					const rideCreatedAt = new ObjectId(ride._id).getTimestamp();
+					return rideCreatedAt >= startOfMonth && rideCreatedAt < endOfMonth;
+				}
+			});
+
+			stats[startOfMonth.toLocaleString('default', { month: 'long' })] =
+				ridesInMonth.length;
+		}
+
+		response.json(stats);
+		response.status(202);
+	};
+
+	private getAPoolStats = async (
+		request: express.Request,
+		response: express.Response
+	) => {
+		// response.send("");
+		const currentDate = new Date();
+		const monthCount = 7;
+		const stats = {};
+
+		for (let i = monthCount - 1; i >= 0; i--) {
+			const startOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i,
+				1
+			);
+			const endOfMonth = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth() - i + 1,
+				1
+			);
+
+			const rides = await this.ride.find({});
+
+			const ridesInMonth = rides.filter((ride) => {
+				if (!ride.completed) {
+					const rideCreatedAt = new ObjectId(ride._id).getTimestamp();
+					return rideCreatedAt >= startOfMonth && rideCreatedAt < endOfMonth;
+				}
+			});
+
+			stats[startOfMonth.toLocaleString('default', { month: 'long' })] =
+				ridesInMonth.length;
+		}
+
+		response.json(stats);
+		response.status(202);
+	};
 
 	private joinPool = (request: express.Request, response: express.Response) => {
 		// var ObjectId = require('mongoose').Types.ObjectId;
@@ -270,7 +443,11 @@ export default class RideController implements Controller {
 		const id = request.params.id;
 		// const rideData = request.body;
 		this.ride
-			.findByIdAndUpdate(id, { completed: true }, { new: true })
+			.findByIdAndUpdate(
+				id,
+				{ completed: true, completedTime: new Date() },
+				{ new: true }
+			)
 			.then(() => {
 				response.sendStatus(200);
 			})
